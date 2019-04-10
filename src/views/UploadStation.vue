@@ -15,7 +15,7 @@
       </el-col>
     </el-row>
     <div class="opera-wrap">
-      <div class="opera-item" @click="addStation()">
+      <div class="opera-item" @click="addStation = true">
         <i class="icon iconfont icon-xinzeng"></i>
         <span>添加工参</span>
       </div>
@@ -62,7 +62,47 @@
       :total="pageCount"
     >
     </el-pagination>
-    <div class="pagination-wrap"></div>
+    <el-dialog title="添加工参" :visible.sync="addStation" width="30%">
+      <el-form
+        ref="stationFrom"
+        :model="stationInfo"
+        :rules="rules"
+        label-position="right"
+        label-width="80px"
+      >
+        <el-form-item label="工参名称" prop="Name">
+          <el-input v-model="stationInfo.Name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="制式" prop="MobileMode">
+          <el-input
+            v-model="stationInfo.MobileMode"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="路径" prop="Path">
+          <el-input
+            v-model="stationInfo.Path"
+            autocomplete="off"
+            :readonly="true"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <el-upload
+        class="upload-demo"
+        drag
+        action="/BaseStation/UploadBaseStation"
+        :show-file-list="false"
+        :on-success="uploadCompleted"
+        :before-upload="uploadValid"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+      </el-upload>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addStation = false">取 消</el-button>
+        <el-button type="primary" @click="saveStation">保存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,7 +121,20 @@ export default {
         1: "启用",
         2: "停用",
         3: "删除"
-      }
+      },
+      stationInfo: {
+        Name: "",
+        MobileMode: "",
+        Path: ""
+      },
+      rules: {
+        Name: [{ required: true, message: "请填写工参名称", trigger: "blur" }],
+        MobileMode: [
+          { required: true, message: "请填写制式", trigger: "blur" }
+        ],
+        Path: [{ required: true, message: "请上传工参", trigger: "blur" }]
+      },
+      addStation: false
     };
   },
   methods: {
@@ -124,6 +177,53 @@ export default {
           }
         );
       }
+    },
+    saveStation() {
+      this.$refs["stationFrom"].validate(valid => {
+        if (valid) {
+          this.$post("/BaseStation/AddBaseStation", this.stationInfo).then(
+            res => {
+              if (res.State === 0) {
+                this.$message({
+                  message: "保存成功！",
+                  type: "success"
+                });
+                this.addStation = false;
+                this.stationInfo = {
+                  Name: "",
+                  MobileMode: "",
+                  Path: ""
+                };
+                this.queryFn();
+              } else {
+                this.$message.error("保存失败!");
+              }
+            }
+          );
+        }
+      });
+    },
+    uploadValid(file) {
+      const isExcel = file.name.replace(/.+\./, "").toLowerCase() === "xlsx";
+      if (!isExcel) {
+        this.$message.error("上传工参只能是 xlsx 格式!");
+      }
+      return isExcel;
+    },
+    uploadCompleted(res) {
+      if (res.State === 0) {
+        this.$message({
+          message: "上传成功！",
+          type: "success"
+        });
+        this.stationInfo.Path = res.Data;
+      } else {
+        this.$notify.error({
+          title: "工参上传错误",
+          message: res.Message,
+          duration: 0
+        });
+      }
     }
   },
   created() {
@@ -155,9 +255,10 @@ export default {
         color: #409eff;
       }
       > i {
-        font-size: 30px;
+        font-size: 20px;
         position: absolute;
-        left: 0;
+        left: 3px;
+        top: 3px;
       }
       > span {
         line-height: 30px;

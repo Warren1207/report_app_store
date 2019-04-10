@@ -36,7 +36,7 @@ Mock.mock(RegExp("/BaseStation/GetBaseStationList.*"), "get", function() {
   };
 });
 
-Mock.mock("/BaseStation/UpdateBaseStation", "post", function() {
+Mock.mock("/BaseStation/AddBaseStation", "post", function() {
   return {
     State: 0,
     FlagDescription: "SUCCESS",
@@ -44,5 +44,17 @@ Mock.mock("/BaseStation/UpdateBaseStation", "post", function() {
     Data: "Success",
     TotalCount: 0,
     Message: "OK"
+  };
+});
+
+Mock.mock("/BaseStation/UploadBaseStation", "post", function() {
+  return {
+    CachedTime: "2019-04-10 11:03:49.867400",
+    Data:
+      "D:SourceWorkReportingAppStoreReportingAppStore.WebBaseStation工参模板.xlsx",
+    FlagDescription: "SUCCESS",
+    Message: "OK",
+    State: 0,
+    TotalCount: 0
   };
 });
