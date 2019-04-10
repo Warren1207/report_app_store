@@ -36,6 +36,27 @@ Mock.mock(RegExp("/BaseStation/GetBaseStationList.*"), "get", function() {
   };
 });
 
+Mock.mock(RegExp("/ReportTemplate/GetReportTemplateList.*"), "get", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 11:21:32.257400",
+    Data: [
+      {
+        id: 1,
+        name: "测试工参",
+        path:
+          "C:\\Users\\Public\\Nwt\\cache\\recv\\丁凡\\zunyi_siteinfo190403.csv",
+        status: 2,
+        createuserid: null,
+        createdate: "/Date(1554866258374)/"
+      }
+    ],
+    TotalCount: 1,
+    Message: "OK"
+  };
+});
+
 Mock.mock("/BaseStation/AddBaseStation", "post", function() {
   return {
     State: 0,

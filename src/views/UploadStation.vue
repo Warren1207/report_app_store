@@ -41,6 +41,7 @@
         height="100%"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column type="index" width="55"> </el-table-column>
         <el-table-column prop="name" label="名称"> </el-table-column>
         <el-table-column prop="filename" label="文件名" show-overflow-tooltip>
         </el-table-column>
@@ -232,39 +233,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.wrap {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  .table-wrap {
-    flex: 1;
-    width: 100%;
-    padding: 15px 0;
-  }
-  .opera-wrap {
-    text-align: left;
-    padding: 10px 0;
-    .opera-item {
-      display: inline-block;
-      padding-left: 35px;
-      position: relative;
-      color: #666;
-      cursor: pointer;
-      &:hover {
-        color: #409eff;
-      }
-      > i {
-        font-size: 20px;
-        position: absolute;
-        left: 3px;
-        top: 3px;
-      }
-      > span {
-        line-height: 30px;
-        font-size: 15px;
-      }
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>

@@ -34,4 +34,38 @@ body {
     }
   }
 }
+.wrap {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .table-wrap {
+    flex: 1;
+    width: 100%;
+    padding: 15px 0;
+  }
+  .opera-wrap {
+    text-align: left;
+    padding: 10px 0;
+    .opera-item {
+      display: inline-block;
+      padding-left: 35px;
+      position: relative;
+      color: #666;
+      cursor: pointer;
+      &:hover {
+        color: #409eff;
+      }
+      > i {
+        font-size: 20px;
+        position: absolute;
+        left: 3px;
+        top: 3px;
+      }
+      > span {
+        line-height: 30px;
+        font-size: 15px;
+      }
+    }
+  }
+}
 </style>
