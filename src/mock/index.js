@@ -35,3 +35,14 @@ Mock.mock(RegExp("/BaseStation/GetBaseStationList.*"), "get", function() {
     Message: "OK"
   };
 });
+
+Mock.mock("/BaseStation/UpdateBaseStation", "post", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 10:33:41.814400",
+    Data: "Success",
+    TotalCount: 0,
+    Message: "OK"
+  };
+});

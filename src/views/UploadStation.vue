@@ -14,6 +14,24 @@
         <el-button type="primary" @click="queryFn">搜索</el-button>
       </el-col>
     </el-row>
+    <div class="opera-wrap">
+      <div class="opera-item" @click="addStation()">
+        <i class="icon iconfont icon-xinzeng"></i>
+        <span>添加工参</span>
+      </div>
+      <div class="opera-item" @click="modifyStation(1)">
+        <i class="icon iconfont icon-qiyong"></i>
+        <span>启用</span>
+      </div>
+      <div class="opera-item" @click="modifyStation(2)">
+        <i class="icon iconfont icon-tingyong"></i>
+        <span>停用</span>
+      </div>
+      <div class="opera-item" @click="modifyStation(3)">
+        <i class="icon iconfont icon-shanchu"></i>
+        <span>删除</span>
+      </div>
+    </div>
     <div class="table-wrap">
       <el-table
         ref="uploadStationTable"
@@ -28,9 +46,7 @@
         </el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{
-              statusObj[scope.row.status]
-            }}</span>
+            <span>{{ statusObj[scope.row.status] }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="mobilemode" label="制式"> </el-table-column>
@@ -84,6 +100,30 @@ export default {
     pageChangeFn(val) {
       this.queryParams.pageIndex = val;
       this.queryFn();
+    },
+    modifyStation(Status) {
+      const selected = this.$refs["uploadStationTable"].selection;
+      if (selected.length !== 1) {
+        this.$message({
+          message: "请选择一条数据！",
+          type: "warning"
+        });
+      } else {
+        const Id = selected[0].id;
+        this.$post("/BaseStation/UpdateBaseStation", { Id, Status }).then(
+          res => {
+            if (res.State === 0) {
+              this.$message({
+                message: "操作成功！",
+                type: "success"
+              });
+              this.queryFn();
+            } else {
+              this.$message.error("操作失败！");
+            }
+          }
+        );
+      }
     }
   },
   created() {
@@ -101,6 +141,29 @@ export default {
     flex: 1;
     width: 100%;
     padding: 15px 0;
+  }
+  .opera-wrap {
+    text-align: left;
+    padding: 10px 0;
+    .opera-item {
+      display: inline-block;
+      padding-left: 35px;
+      position: relative;
+      color: #666;
+      cursor: pointer;
+      &:hover {
+        color: #409eff;
+      }
+      > i {
+        font-size: 30px;
+        position: absolute;
+        left: 0;
+      }
+      > span {
+        line-height: 30px;
+        font-size: 15px;
+      }
+    }
   }
 }
 </style>
