@@ -11,14 +11,14 @@
           class="login-from"
           @submit.native.prevent="loginFn"
         >
-          <el-form-item prop="name">
+          <el-form-item prop="UserName">
             <el-input
               class="log_in_input"
               v-model="loginFromData.UserName"
               placeholder="用户名"
             ></el-input>
           </el-form-item>
-          <el-form-item prop="password">
+          <el-form-item prop="PassWord">
             <el-input
               class="log_in_input"
               v-model="loginFromData.PassWord"
@@ -46,6 +46,7 @@
   </div>
 </template>
 <script>
+import store from "../store";
 export default {
   name: "Login",
   data() {
@@ -53,8 +54,10 @@ export default {
       loading: false,
       loginFromData: {},
       rules: {
-        name: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
-        password: [{ required: true, message: "密码不能为空", trigger: "blur" }]
+        UserName: [
+          { required: true, message: "用户名不能为空", trigger: "blur" }
+        ],
+        PassWord: [{ required: true, message: "密码不能为空", trigger: "blur" }]
       }
     };
   },
@@ -63,9 +66,9 @@ export default {
       this.loading = true;
       this.$refs["loginFrom"].validate(valid => {
         if (valid) {
-          this.loading = false;
           this.$post("/Account/Login", this.loginFromData).then(res => {
-            console.log(res.data);
+            this.loading = false;
+            store.commit("setToken", res.Data.Token);
             this.$router.push({
               name: "Layout"
             });

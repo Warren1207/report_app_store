@@ -1,8 +1,39 @@
 import axios from "axios";
+import store from "@/store";
+import router from "@/router";
+import { Message } from "element-ui";
 
 axios.defaults.timeout = 5000;
 axios.defaults.baseURL = "";
 
+// 路由请求拦截
+// http request 拦截器
+axios.interceptors.request.use(
+  config => {
+    config.headers["Token"] = store.Token;
+    return config;
+  },
+  error => {
+    return Promise.reject(error.response);
+  }
+);
+
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response.status === 401) {
+      router.push({
+        name: "login"
+      });
+    }
+    Message({
+      message: error.message,
+      type: "error",
+      duration: 5 * 1000
+    });
+    return Promise.reject(error);
+  }
+);
 /**
  * 封装get方法
  * @param url

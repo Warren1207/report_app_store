@@ -1,10 +1,12 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Layout from "./views/Layout.vue";
+import store from "@/store";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
+  mode: "history",
   routes: [
     {
       path: "*",
@@ -63,3 +65,18 @@ export default new Router({
     }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  const token = store.getters.Token;
+  if (!token && to.name !== "login") {
+    next({
+      name: "login"
+    });
+  } else if (!token && to.name === "login") {
+    next();
+  } else {
+    next();
+  }
+});
+
+export default router;
