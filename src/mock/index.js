@@ -12,3 +12,26 @@ Mock.mock("/Account/Login", "post", function() {
     Message: "OK"
   };
 });
+
+Mock.mock(RegExp("/BaseStation/GetBaseStationList.*"), "get", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 10:29:25.691400",
+    Data: [
+      {
+        id: 1,
+        name: "测试工参",
+        path:
+          "C:\\Users\\Public\\Nwt\\cache\\recv\\丁凡\\zunyi_siteinfo190403.csv",
+        filename: "zunyi_siteinfo190403",
+        status: 1,
+        createuserid: null,
+        createdate: "/Date(1554863116132)/",
+        mobilemode: "NB"
+      }
+    ],
+    TotalCount: 1,
+    Message: "OK"
+  };
+});

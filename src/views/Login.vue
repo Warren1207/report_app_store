@@ -69,6 +69,7 @@ export default {
           this.$post("/Account/Login", this.loginFromData).then(res => {
             this.loading = false;
             store.commit("setToken", res.Data.Token);
+            localStorage.setItem("report_app_token", res.Data.Token);
             this.$router.push({
               name: "Layout"
             });

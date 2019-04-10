@@ -107,7 +107,6 @@ export default {
   background-color: #fafafa;
   color: #333;
   text-align: center;
-  line-height: 160px;
 }
 .el-menu {
   border-right: 0;
