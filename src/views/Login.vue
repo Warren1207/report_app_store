@@ -14,14 +14,14 @@
           <el-form-item prop="name">
             <el-input
               class="log_in_input"
-              v-model="loginFromData.name"
+              v-model="loginFromData.UserName"
               placeholder="用户名"
             ></el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input
               class="log_in_input"
-              v-model="loginFromData.password"
+              v-model="loginFromData.PassWord"
               placeholder="密码"
               type="password"
               autocomplete="off"
@@ -64,10 +64,12 @@ export default {
       this.$refs["loginFrom"].validate(valid => {
         if (valid) {
           this.loading = false;
-          this.$router.push({
-            name: "Layout"
+          this.$post("/Account/Login", this.loginFromData).then(res => {
+            console.log(res.data);
+            this.$router.push({
+              name: "Layout"
+            });
           });
-          console.log(valid);
         } else {
           this.loading = false;
           this.$message({

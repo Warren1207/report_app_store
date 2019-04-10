@@ -10,40 +10,43 @@
     <el-container>
       <el-aside width="200px" style="background-color:#191919">
         <el-menu
-          default-active="1"
+          :default-active="currentRoute"
           class="el-menu-vertical-demo"
           background-color="#191919"
           text-color="#ffffff"
           active-text-color="#0057ff"
+          :router="true"
         >
-          <el-menu-item index="1">
+          <el-menu-item index="/uploadStation">
             <i class="icon iconfont icon-gongcanshangchuan"></i>
             <span slot="title">工参上传</span>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="/uploadReport">
             <i class="icon iconfont icon-mobanshangchuan"></i>
             <span slot="title">报告模板上传</span>
           </el-menu-item>
-          <el-menu-item index="3">
+          <el-menu-item index="/reportList">
             <i class="icon iconfont icon-baogaoliebiao"></i>
             <span slot="title">报告列表</span>
           </el-menu-item>
-          <el-menu-item index="4">
+          <el-menu-item index="/taskPlan">
             <i class="icon iconfont icon-jihuarenwu"></i>
             <span slot="title">计划任务</span>
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="/setReport">
             <i class="icon iconfont icon-shedingbaogao"></i>
             <span slot="title">设定报告</span>
           </el-menu-item>
-          <el-menu-item index="6">
+          <el-menu-item index="/serverList">
             <i class="icon iconfont icon-fuwuqiguanli"></i>
             <span slot="title">SKY服务器列表</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view />
+        </el-main>
         <el-footer>© Copyright 2009-2019 报告应用商店</el-footer>
       </el-container>
     </el-container>
@@ -51,7 +54,17 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "layout",
+  data() {
+    return {
+      currentRoute: ""
+    };
+  },
+  created() {
+    this.currentRoute = this.$router.currentRoute.path;
+  }
+};
 </script>
 
 <style lang="scss" scoped>
