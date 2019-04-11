@@ -14,6 +14,24 @@
         <el-button type="primary" @click="queryFn">搜索</el-button>
       </el-col>
     </el-row>
+    <div class="opera-wrap">
+      <div class="opera-item" @click="addTemplate = true">
+        <i class="icon iconfont icon-xinzeng"></i>
+        <span>添加模板</span>
+      </div>
+      <div class="opera-item" @click="modifyStation(1)">
+        <i class="icon iconfont icon-qiyong"></i>
+        <span>启用</span>
+      </div>
+      <div class="opera-item" @click="modifyStation(2)">
+        <i class="icon iconfont icon-tingyong"></i>
+        <span>停用</span>
+      </div>
+      <div class="opera-item" @click="modifyStation(3)">
+        <i class="icon iconfont icon-shanchu"></i>
+        <span>删除</span>
+      </div>
+    </div>
     <div class="table-wrap">
       <el-table
         ref="uploadStationTable"
@@ -43,6 +61,66 @@
       :total="pageCount"
     >
     </el-pagination>
+    <el-dialog title="添加模板" :visible.sync="addTemplate" width="30%">
+      <el-form
+        ref="templateFrom"
+        :model="templateInfo"
+        :rules="rules"
+        label-position="right"
+        label-width="80px"
+        style="text-align: left;"
+      >
+        <el-form-item label="模板名称" prop="Name">
+          <el-input
+            v-model="templateInfo.Name"
+            autocomplete="off"
+            style="width:300px;margin-right:10px;"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="模板路径" prop="Path">
+          <el-input
+            v-model="templateInfo.Path"
+            autocomplete="off"
+            :readonly="true"
+            style="width:300px;margin-right:10px;"
+          ></el-input>
+          <el-upload
+            class="upload-demo"
+            style="display: inline-block;"
+            action="/ReportTemplate/UploadReportTemplate"
+            :data="paramRt"
+            :show-file-list="false"
+            :on-success="uploadCompletedRt"
+            :before-upload="uploadValidRt"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="配置路径" prop="XmlPath">
+          <el-input
+            v-model="templateInfo.XmlPath"
+            autocomplete="off"
+            :readonly="true"
+            style="width:300px;margin-right:10px;"
+          ></el-input>
+          <el-upload
+            class="upload-demo"
+            style="display: inline-block;"
+            action="/ReportTemplate/UploadReportTemplate"
+            :data="paramXml"
+            :show-file-list="false"
+            :on-success="uploadCompletedXml"
+            :before-upload="uploadValidXml"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addTemplate = false">取 消</el-button>
+        <el-button type="primary" @click="saveTemplate">保存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -61,6 +139,25 @@ export default {
         1: "启用",
         2: "停用",
         3: "删除"
+      },
+      paramRt: {
+        isXml: false
+      },
+      paramXml: {
+        isXml: true
+      },
+      addTemplate: false,
+      rules: {
+        Name: [{ required: true, message: "请填写模板名称", trigger: "blur" }],
+        Path: [{ required: true, message: "请上传模板", trigger: "blur" }],
+        XmlPath: [
+          { required: true, message: "请上传模板配置", trigger: "blur" }
+        ]
+      },
+      templateInfo: {
+        Name: "",
+        Path: "",
+        XmlPath: ""
       }
     };
   },
@@ -81,6 +178,104 @@ export default {
     pageChangeFn(val) {
       this.queryParams.pageIndex = val;
       this.queryFn();
+    },
+    modifyStation(Status) {
+      const selected = this.$refs["uploadStationTable"].selection;
+      if (selected.length !== 1) {
+        this.$message({
+          message: "请选择一条数据！",
+          type: "warning"
+        });
+      } else {
+        const Id = selected[0].id;
+        this.$post("/ReportTemplate/UpdateReportTemplate", { Id, Status }).then(
+          res => {
+            if (res.State === 0) {
+              this.$message({
+                message: "操作成功！",
+                type: "success"
+              });
+              this.queryFn();
+            } else {
+              this.$message.error("操作失败！");
+            }
+          }
+        );
+      }
+    },
+    uploadValidRt(file) {
+      const type = file.name.replace(/.+\./, "").toLowerCase();
+      let isRT = false;
+      if (type === "rtlx" || type === "rtl") {
+        isRT = true;
+      }
+      if (!isRT) {
+        this.$message.error("只能上传rtlx、rtl文件!");
+      }
+      return isRT;
+    },
+    uploadValidXml(file) {
+      const isXml = file.name.replace(/.+\./, "").toLowerCase() === "xml";
+      if (!isXml) {
+        this.$message.error("只能上传xml文件!");
+      }
+      return isXml;
+    },
+    uploadCompletedRt(res) {
+      if (res.State === 0) {
+        this.$message({
+          message: "上传成功！",
+          type: "success"
+        });
+        this.templateInfo.Path = res.Data;
+      } else {
+        this.$notify.error({
+          title: "模板上传错误",
+          message: res.Message,
+          duration: 0
+        });
+      }
+    },
+    uploadCompletedXml(res) {
+      if (res.State === 0) {
+        this.$message({
+          message: "上传成功！",
+          type: "success"
+        });
+        this.templateInfo.XmlPath = res.Data;
+      } else {
+        this.$notify.error({
+          title: "模板配置上传错误",
+          message: res.Message,
+          duration: 0
+        });
+      }
+    },
+    saveTemplate() {
+      this.$refs["templateFrom"].validate(valid => {
+        if (valid) {
+          this.$post(
+            "/ReportTemplate/AddReportTemplate",
+            this.templateInfo
+          ).then(res => {
+            if (res.State === 0) {
+              this.$message({
+                message: "保存成功！",
+                type: "success"
+              });
+              this.addTemplate = false;
+              this.templateInfo = {
+                Name: "",
+                Path: "",
+                XmlPath: ""
+              };
+              this.queryFn();
+            } else {
+              this.$message.error("保存失败!");
+            }
+          });
+        }
+      });
     }
   },
   created() {

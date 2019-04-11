@@ -68,6 +68,17 @@ Mock.mock("/BaseStation/AddBaseStation", "post", function() {
   };
 });
 
+Mock.mock("/ReportTemplate/AddReportTemplate", "post", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 10:33:41.814400",
+    Data: "Success",
+    TotalCount: 0,
+    Message: "OK"
+  };
+});
+
 Mock.mock("/BaseStation/UploadBaseStation", "post", function() {
   return {
     CachedTime: "2019-04-10 11:03:49.867400",
@@ -77,5 +88,42 @@ Mock.mock("/BaseStation/UploadBaseStation", "post", function() {
     Message: "OK",
     State: 0,
     TotalCount: 0
+  };
+});
+
+Mock.mock("/ReportTemplate/UploadReportTemplate", "post", function(option) {
+  console.log(option);
+  return {
+    CachedTime: "2019-04-10 11:03:49.867400",
+    Data:
+      "D:SourceWorkReportingAppStoreReportingAppStore.WebBaseStation工参模板" +
+      Math.floor(Math.random() * 99) +
+      ".xlsx",
+    FlagDescription: "SUCCESS",
+    Message: "OK",
+    State: 0,
+    TotalCount: 0
+  };
+});
+
+Mock.mock("/BaseStation/UpdateBaseStation", "post", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 10:33:41.814400",
+    Data: "Success",
+    TotalCount: 0,
+    Message: "OK"
+  };
+});
+
+Mock.mock("/ReportTemplate/UpdateReportTemplate", "post", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 10:33:41.814400",
+    Data: "Success",
+    TotalCount: 0,
+    Message: "OK"
   };
 });
