@@ -211,3 +211,154 @@ Mock.mock("/ReportTemplate/UpdateReportTemplate", "post", function() {
     Message: "OK"
   };
 });
+
+Mock.mock(RegExp("/taskplan/index.*"), "get", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 11:51:17.606601",
+    Data: [
+      {
+        id: 1,
+        planname: "1",
+        repeattype: null,
+        startdate: null,
+        enddate: null,
+        intervaltime: null,
+        status: null,
+        createuserid: null,
+        createdate: null,
+        errormessage: null,
+        lastexecute: null,
+        executecount: null
+      },
+      {
+        id: 2,
+        planname: "1",
+        repeattype: null,
+        startdate: null,
+        enddate: null,
+        intervaltime: null,
+        status: null,
+        createuserid: null,
+        createdate: null,
+        errormessage: null,
+        lastexecute: null,
+        executecount: null
+      },
+      {
+        id: 3,
+        planname: "1",
+        repeattype: null,
+        startdate: null,
+        enddate: null,
+        intervaltime: null,
+        status: null,
+        createuserid: null,
+        createdate: null,
+        errormessage: null,
+        lastexecute: null,
+        executecount: null
+      }
+    ],
+    TotalCount: 3,
+    Message: "OK"
+  };
+});
+
+Mock.mock("/taskplan/create", "post", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 11:56:43.476601",
+    Data: null,
+    TotalCount: 0,
+    Message: "OK"
+  };
+});
+
+Mock.mock("/taskplan/delete", "post", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 12:04:37.864601",
+    Data: null,
+    TotalCount: 0,
+    Message: "OK"
+  };
+});
+
+Mock.mock("/scenes/index", "get", function() {
+  return {
+    State: 0,
+    FlagDescription: "SUCCESS",
+    CachedTime: "2019-04-10 16:47:43.043601",
+    Data: [
+      {
+        id: 9,
+        name: "TOPn-卡顿（联通）",
+        createuserid: null,
+        createdate: null,
+        status: null
+      },
+      {
+        id: 8,
+        name: "TOPn-低速率（联通）",
+        createuserid: null,
+        createdate: null,
+        status: null
+      },
+      {
+        id: 7,
+        name: "TOPn-低COI（联通）",
+        createuserid: null,
+        createdate: null,
+        status: null
+      },
+      {
+        id: 6,
+        name: "网络监控（联通）",
+        createuserid: null,
+        createdate: null,
+        status: null
+      },
+      {
+        id: 5,
+        name: "VoLET两高两低专项（中移）",
+        createuserid: null,
+        createdate: null,
+        status: null
+      },
+      {
+        id: 4,
+        name: "高负荷",
+        createuserid: null,
+        createdate: null,
+        status: null
+      },
+      {
+        id: 3,
+        name: "深度覆盖MR专项（中移）",
+        createuserid: null,
+        createdate: null,
+        status: null
+      },
+      {
+        id: 2,
+        name: "多网融合专项（中移）",
+        createuserid: null,
+        createdate: null,
+        status: null
+      },
+      {
+        id: 1,
+        name: "服务器机房部署",
+        createuserid: null,
+        createdate: null,
+        status: null
+      }
+    ],
+    TotalCount: 0,
+    Message: "OK"
+  };
+});
