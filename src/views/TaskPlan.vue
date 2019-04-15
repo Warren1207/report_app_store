@@ -82,6 +82,12 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
+        <el-form-item label="重复类型" prop="repeattype">
+          <el-input
+            v-model="stationInfo.repeattype"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="开始时间" prop="startdate">
           <el-date-picker
             style="width: 100%;"
@@ -90,6 +96,37 @@
             placeholder="选择日期"
           >
           </el-date-picker>
+        </el-form-item>
+        <el-form-item label="结束时间" prop="enddate">
+          <el-date-picker
+            style="width: 100%;"
+            v-model="stationInfo.enddate"
+            type="date"
+            placeholder="选择日期"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="间隔" prop="intervaltime">
+          <el-input
+            v-model="stationInfo.intervaltime"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="任务场景" prop="selectScene_selected">
+          <el-select
+            v-model="selectScene_selected"
+            clearable
+            placeholder="任务场景"
+            style="width: 100%;"
+          >
+            <el-option
+              v-for="item in statusObj"
+              :key="item.value"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -121,8 +158,20 @@ export default {
         planname: [
           { required: true, message: "请填写计划名称", trigger: "blur" }
         ],
+        repeattype: [
+          { required: true, message: "请填写重复类型", trigger: "blur" }
+        ],
         startdate: [
-          { required: true, message: "请填写开始时间", trigger: "blur" }
+          { required: true, message: "请选择开始时间", trigger: "blur" }
+        ],
+        enddate: [
+          { required: true, message: "请选择结束时间", trigger: "blur" }
+        ],
+        intervaltime: [
+          { required: true, message: "请填写间隔", trigger: "blur" }
+        ],
+        selectScene_selected: [
+          { required: true, message: "请选择任务场景", trigger: "blur" }
         ]
       },
       addStation: false
