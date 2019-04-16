@@ -219,7 +219,7 @@ export default {
               });
               this.queryFn();
             } else {
-              this.$message.error("操作失败！");
+              this.$message.error(res.Message);
             }
           }
         );
