@@ -24,7 +24,7 @@ const router = new Router({
       path: "/",
       name: "Layout",
       component: Layout,
-      redirect: "uploadStation",
+      redirect: "reportList",
       children: [
         {
           path: "uploadStation",
