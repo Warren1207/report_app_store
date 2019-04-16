@@ -17,6 +17,10 @@
           active-text-color="#0057ff"
           :router="true"
         >
+          <el-menu-item index="/reportList">
+            <i class="icon iconfont icon-baogaoliebiao"></i>
+            <span slot="title">报告列表</span>
+          </el-menu-item>
           <el-menu-item index="/uploadStation">
             <i class="icon iconfont icon-gongcanshangchuan"></i>
             <span slot="title">工参上传</span>
@@ -25,21 +29,9 @@
             <i class="icon iconfont icon-mobanshangchuan"></i>
             <span slot="title">报告模板上传</span>
           </el-menu-item>
-          <el-menu-item index="/reportList">
-            <i class="icon iconfont icon-baogaoliebiao"></i>
-            <span slot="title">报告列表</span>
-          </el-menu-item>
           <el-menu-item index="/taskPlan">
             <i class="icon iconfont icon-jihuarenwu"></i>
             <span slot="title">计划任务</span>
-          </el-menu-item>
-          <el-menu-item index="/setReport">
-            <i class="icon iconfont icon-shedingbaogao"></i>
-            <span slot="title">设定报告</span>
-          </el-menu-item>
-          <el-menu-item index="/serverList">
-            <i class="icon iconfont icon-fuwuqiguanli"></i>
-            <span slot="title">SKY服务器列表</span>
           </el-menu-item>
         </el-menu>
       </el-aside>

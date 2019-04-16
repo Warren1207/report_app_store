@@ -49,6 +49,13 @@
             <span>{{ statusObj[scope.row.status] }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="downloadFn(scope.row)"
+              >下载</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-pagination
@@ -87,12 +94,17 @@
           <el-upload
             class="upload-demo"
             style="display: inline-block;"
+<<<<<<< HEAD
             action="http://10.168.1.120:8030/ReportTemplate/UploadReportTemplate"
+=======
+            :action="uploadRtUrl"
+>>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
             :data="paramRt"
             :show-file-list="false"
             :headers="tokenHeaders"
             :on-success="uploadCompletedRt"
             :before-upload="uploadValidRt"
+            :headers="uploadHeaders"
           >
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
@@ -107,12 +119,17 @@
           <el-upload
             class="upload-demo"
             style="display: inline-block;"
+<<<<<<< HEAD
             action="http://10.168.1.120:8030/ReportTemplate/UploadReportTemplate"
+=======
+            :action="uploadXmlUrl"
+>>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
             :data="paramXml"
             :show-file-list="false"
             :headers="tokenHeaders"
             :on-success="uploadCompletedXml"
             :before-upload="uploadValidXml"
+            :headers="uploadHeaders"
           >
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
@@ -127,6 +144,10 @@
 </template>
 
 <script>
+<<<<<<< HEAD
+=======
+import config from "@/libs/config";
+>>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
 import store from "@/store";
 export default {
   name: "uploadreport",
@@ -164,6 +185,11 @@ export default {
         Name: "",
         Path: "",
         XmlPath: ""
+      },
+      uploadXmlUrl: config.baseUrl + "ReportTemplate/UploadReportTemplate",
+      uploadRtUrl: config.baseUrl + "ReportTemplate/UploadReportTemplate",
+      uploadHeaders: {
+        Token: store.getters.Token
       }
     };
   },
@@ -282,6 +308,10 @@ export default {
           });
         }
       });
+    },
+    downloadFn(row) {
+      window.location.href =
+        config.baseUrl + "File/FileDownload?FilePath=" + row.path;
     }
   },
   created() {

@@ -51,6 +51,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="mobilemode" label="制式"> </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="downloadFn(scope.row)"
+              >下载</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-pagination
@@ -91,15 +98,27 @@
       <el-upload
         class="upload-demo"
         drag
+<<<<<<< HEAD
         action="http://10.168.1.120:8030/BaseStation/UploadBaseStation"
+=======
+        :action="uploadAction"
+>>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
         :show-file-list="false"
         :headers="tokenHeaders"
         :on-success="uploadCompleted"
         :before-upload="uploadValid"
+        :headers="uploadHeaders"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
       </el-upload>
+      <span style="color:red;"
+        >注：工参excel必须完全按照模板内容的格式。<a
+          href="#"
+          @click="downLoadTemplate"
+          >点击下载模板。</a
+        ></span
+      >
       <span slot="footer" class="dialog-footer">
         <el-button @click="addStation = false">取 消</el-button>
         <el-button type="primary" @click="saveStation">保存</el-button>
@@ -109,6 +128,10 @@
 </template>
 
 <script>
+<<<<<<< HEAD
+=======
+import config from "@/libs/config";
+>>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
 import store from "@/store";
 export default {
   name: "uploadstation",
@@ -140,7 +163,11 @@ export default {
         ],
         Path: [{ required: true, message: "请上传工参", trigger: "blur" }]
       },
-      addStation: false
+      addStation: false,
+      uploadAction: config.baseUrl + "/BaseStation/UploadBaseStation",
+      uploadHeaders: {
+        Token: store.getters.Token
+      }
     };
   },
   methods: {
@@ -230,6 +257,16 @@ export default {
           duration: 0
         });
       }
+    },
+    downLoadTemplate() {
+      window.location.href =
+        config.baseUrl +
+        "File/FileDownload?FilePath=" +
+        config.stationTemplateUrl;
+    },
+    downloadFn(row) {
+      window.location.href =
+        config.baseUrl + "File/FileDownload?FilePath=" + row.path;
     }
   },
   created() {

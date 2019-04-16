@@ -68,11 +68,15 @@ export default {
         if (valid) {
           this.$post("/Account/Login", this.loginFromData).then(res => {
             this.loading = false;
-            store.commit("setToken", res.Data.Token);
-            localStorage.setItem("report_app_token", res.Data.Token);
-            this.$router.push({
-              name: "Layout"
-            });
+            if (res.State === 0) {
+              store.commit("setToken", res.Data.Token);
+              localStorage.setItem("report_app_token", res.Data.Token);
+              this.$router.push({
+                name: "Layout"
+              });
+            } else {
+              this.$message.error(res.Message);
+            }
           });
         } else {
           this.loading = false;
