@@ -5,6 +5,7 @@
         <el-input
           placeholder="请输入内容"
           v-model="input5"
+          readonly
           class="input-with-select"
         >
           <el-button slot="append" @click="templatList">选中模板</el-button>
@@ -65,6 +66,7 @@
         :data="gridData"
         ref="uploadStationTable"
         @selection-change="chooseInstance"
+        class="removeCheckbox"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="50"> </el-table-column>
@@ -173,54 +175,60 @@ export default {
       this.loading = true;
       this.dialogTableVisible = false;
       const selected = this.$refs["uploadStationTable"].selection;
-      this.templateId = selected[0].id;
-      this.$fetch("/ReportTemplate/GetReportTemplateXml", {
-        id: this.templateId
-      }).then(res => {
-        let data = JSON.parse(res.Data.replace(/@/g, "")).Parameters;
-        this.saveData = data;
-        this.parameter = [];
-        this.parameterChlid = [[], [], [], [], [], [], [], [], [], [], []];
+      if (selected.length !== 0) {
+        this.templateId = selected[0].id;
+        this.input5 = selected[0].name;
+        this.$fetch("/ReportTemplate/GetReportTemplateXml", {
+          id: this.templateId
+        }).then(res => {
+          let data = JSON.parse(res.Data.replace(/@/g, "")).Parameters;
+          this.saveData = data;
+          this.parameter = [];
+          this.parameterChlid = [[], [], [], [], [], [], [], [], [], [], []];
 
-        let count = -1;
+          let count = -1;
 
-        for (let key in data) {
-          let keys = data[key];
-          if (keys && keys.Text === "Connections") {
-            count++;
-            this.parameter.push(keys.Text);
-            keys.Connection.Property.forEach(item => {
-              this.publicFun(item, count);
-            });
-          } else if (keys && keys.Text === "Select Categories") {
-            // eslin -disable-next-line
-          } else if (keys && keys.Text === "Output File Name") {
-            count++;
-            this.parameter.push(keys.Text);
-            this.publicFun(keys, count);
-          } else if (keys && keys.Text === "Output Directory") {
-            // eslin -disable-next-line
-          } else if (keys && keys.Text === "Output Type") {
-            count++;
-            this.parameter.push(keys.Text);
-            this.publicFun(keys, count);
-          } else if (keys && keys.Text === "Save By Category") {
-            // eslin -disable-next-line
-          } else if (keys && keys.Text === "Project Map Source") {
-            count++;
-            this.parameter.push(keys.Text);
-            this.publicFun(keys, count);
-          } else if (keys && keys.Text === "Customs") {
-            count++;
-            this.parameter.push(keys.Text);
-            keys.Custom.forEach(item => {
-              this.publicFun(item, count);
-            });
+          for (let key in data) {
+            let keys = data[key];
+            if (keys && keys.Text === "Connections") {
+              count++;
+              this.parameter.push(keys.Text);
+              keys.Connection.Property.forEach(item => {
+                this.publicFun(item, count);
+              });
+            } else if (keys && keys.Text === "Select Categories") {
+              // eslin -disable-next-line
+            } else if (keys && keys.Text === "Output File Name") {
+              count++;
+              this.parameter.push(keys.Text);
+              this.publicFun(keys, count);
+            } else if (keys && keys.Text === "Output Directory") {
+              // eslin -disable-next-line
+            } else if (keys && keys.Text === "Output Type") {
+              count++;
+              this.parameter.push(keys.Text);
+              this.publicFun(keys, count);
+            } else if (keys && keys.Text === "Save By Category") {
+              // eslin -disable-next-line
+            } else if (keys && keys.Text === "Project Map Source") {
+              count++;
+              this.parameter.push(keys.Text);
+              this.publicFun(keys, count);
+            } else if (keys && keys.Text === "Customs") {
+              count++;
+              this.parameter.push(keys.Text);
+              keys.Custom.forEach(item => {
+                this.publicFun(item, count);
+              });
+            }
           }
-        }
-        this.saveIsShow = true;
+          this.saveIsShow = true;
+          this.loading = false;
+        });
+      } else {
         this.loading = false;
-      });
+        this.$message.warning("请选择模板！");
+      }
     },
     saveFun() {
       this.loading = true;
@@ -315,7 +323,8 @@ export default {
     }
   }
 }
-thead {
+
+.removeCheckbox thead {
   .el-table-column--selection {
     .cell {
       display: none;
