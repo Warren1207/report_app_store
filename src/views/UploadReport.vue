@@ -94,14 +94,9 @@
           <el-upload
             class="upload-demo"
             style="display: inline-block;"
-<<<<<<< HEAD
-            action="http://10.168.1.120:8030/ReportTemplate/UploadReportTemplate"
-=======
             :action="uploadRtUrl"
->>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
             :data="paramRt"
             :show-file-list="false"
-            :headers="tokenHeaders"
             :on-success="uploadCompletedRt"
             :before-upload="uploadValidRt"
             :headers="uploadHeaders"
@@ -119,14 +114,9 @@
           <el-upload
             class="upload-demo"
             style="display: inline-block;"
-<<<<<<< HEAD
-            action="http://10.168.1.120:8030/ReportTemplate/UploadReportTemplate"
-=======
             :action="uploadXmlUrl"
->>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
             :data="paramXml"
             :show-file-list="false"
-            :headers="tokenHeaders"
             :on-success="uploadCompletedXml"
             :before-upload="uploadValidXml"
             :headers="uploadHeaders"
@@ -144,10 +134,7 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-=======
 import config from "@/libs/config";
->>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
 import store from "@/store";
 export default {
   name: "uploadreport",
@@ -156,9 +143,6 @@ export default {
       queryParams: {
         pageIndex: 1,
         pageSize: 10
-      },
-      tokenHeaders: {
-        Token: store.getters.Token
       },
       pageCount: 0,
       queryData: [],

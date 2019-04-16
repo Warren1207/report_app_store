@@ -5,11 +5,7 @@ import { Message } from "element-ui";
 import config from "@/libs/config";
 
 axios.defaults.timeout = 5000;
-<<<<<<< HEAD
-axios.defaults.baseURL = "http://10.168.1.120:8030/";
-=======
 axios.defaults.baseURL = config.baseUrl;
->>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
 
 // 路由请求拦截
 // http request 拦截器

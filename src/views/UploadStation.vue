@@ -98,13 +98,8 @@
       <el-upload
         class="upload-demo"
         drag
-<<<<<<< HEAD
-        action="http://10.168.1.120:8030/BaseStation/UploadBaseStation"
-=======
         :action="uploadAction"
->>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
         :show-file-list="false"
-        :headers="tokenHeaders"
         :on-success="uploadCompleted"
         :before-upload="uploadValid"
         :headers="uploadHeaders"
@@ -128,10 +123,7 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-=======
 import config from "@/libs/config";
->>>>>>> bb9194607146de438d47e1e483f42f4ef4033b7b
 import store from "@/store";
 export default {
   name: "uploadstation",
@@ -142,9 +134,6 @@ export default {
         pageSize: 10
       },
       pageCount: 0,
-      tokenHeaders: {
-        Token: store.getters.Token
-      },
       queryData: [],
       statusObj: {
         1: "启用",
