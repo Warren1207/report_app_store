@@ -147,7 +147,7 @@ export default {
   border-bottom: 2px solid #dcdfe6;
   border-radius: 0;
   &:focus {
-    border-color: #61daa5;
+    border-color: #409eff;
   }
 }
 </style>
