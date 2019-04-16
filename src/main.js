@@ -8,7 +8,7 @@ import "element-ui/lib/theme-chalk/index.css";
 import { post, fetch } from "./libs/http";
 /** iconfont **/
 import "@/assets/iconfont/iconfont.css";
-
+import "babel-polyfill";
 // import "./mock"; // 模拟数据
 
 Vue.use(ElementUI, { size: "", zIndex: 3000 });
