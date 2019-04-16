@@ -183,6 +183,19 @@ export default {
       this.queryParams.pageIndex = val;
       this.queryFn();
     },
+    delFn(Id, Status) {
+      this.$post("/BaseStation/UpdateBaseStation", { Id, Status }).then(res => {
+        if (res.State === 0) {
+          this.$message({
+            message: "操作成功！",
+            type: "success"
+          });
+          this.queryFn();
+        } else {
+          this.$message.error(res.Message);
+        }
+      });
+    },
     modifyStation(Status) {
       const selected = this.$refs["uploadStationTable"].selection;
       if (selected.length !== 1) {
@@ -192,19 +205,17 @@ export default {
         });
       } else {
         const Id = selected[0].id;
-        this.$post("/BaseStation/UpdateBaseStation", { Id, Status }).then(
-          res => {
-            if (res.State === 0) {
-              this.$message({
-                message: "操作成功！",
-                type: "success"
-              });
-              this.queryFn();
-            } else {
-              this.$message.error(res.Message);
-            }
-          }
-        );
+        if (Status === 3) {
+          this.$confirm("是否确认删除此数据?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }).then(() => {
+            this.delFn(Id, Status);
+          });
+        } else {
+          this.delFn(Id, Status);
+        }
       }
     },
     saveStation() {
