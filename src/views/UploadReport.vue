@@ -49,6 +49,13 @@
             <span>{{ statusObj[scope.row.status] }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="downloadFn(scope.row)"
+              >下载</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-pagination
@@ -87,11 +94,12 @@
           <el-upload
             class="upload-demo"
             style="display: inline-block;"
-            action="/ReportTemplate/UploadReportTemplate"
+            :action="uploadRtUrl"
             :data="paramRt"
             :show-file-list="false"
             :on-success="uploadCompletedRt"
             :before-upload="uploadValidRt"
+            :headers="uploadHeaders"
           >
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
@@ -106,11 +114,12 @@
           <el-upload
             class="upload-demo"
             style="display: inline-block;"
-            action="/ReportTemplate/UploadReportTemplate"
+            :action="uploadXmlUrl"
             :data="paramXml"
             :show-file-list="false"
             :on-success="uploadCompletedXml"
             :before-upload="uploadValidXml"
+            :headers="uploadHeaders"
           >
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
@@ -125,6 +134,8 @@
 </template>
 
 <script>
+import config from "@/libs/config";
+import store from "@/store";
 export default {
   name: "uploadreport",
   data() {
@@ -158,6 +169,11 @@ export default {
         Name: "",
         Path: "",
         XmlPath: ""
+      },
+      uploadXmlUrl: config.baseUrl + "ReportTemplate/UploadReportTemplate",
+      uploadRtUrl: config.baseUrl + "ReportTemplate/UploadReportTemplate",
+      uploadHeaders: {
+        Token: store.getters.Token
       }
     };
   },
@@ -276,6 +292,10 @@ export default {
           });
         }
       });
+    },
+    downloadFn(row) {
+      window.location.href =
+        config.baseUrl + "File/FileDownload?FilePath=" + row.path;
     }
   },
   created() {

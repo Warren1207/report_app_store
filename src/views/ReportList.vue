@@ -1,14 +1,28 @@
 <template>
   <div class="wrap">
-    <el-row>
+    <el-row :gutter="10">
       <el-col :span="4"
         ><el-input v-model="queryParams.name" placeholder="报告名称"></el-input
       ></el-col>
-      <el-col :span="4">
+      <el-col :span="3">
         <el-select v-model="queryParams.status" clearable placeholder="状态">
           <el-option label="成功" :value="1"> </el-option>
           <el-option label="失败" :value="2"> </el-option>
           <el-option label="进行中" :value="0"> </el-option> </el-select
+      ></el-col>
+      <el-col :span="3">
+        <el-select
+          v-model="queryParams.scenes"
+          clearable
+          placeholder="任务场景"
+        >
+          <el-option
+            v-for="(item, index) in scenesArray"
+            :key="index"
+            :label="item.name"
+            :value="item.name"
+          >
+          </el-option> </el-select
       ></el-col>
       <el-col :span="4" style="text-align: left;">
         <el-button type="primary" @click="queryFn">搜索</el-button>
@@ -24,28 +38,41 @@
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="55"> </el-table-column>
-        <el-table-column prop="Name" label="报告名称" show-overflow-tooltip>
+        <el-table-column
+          prop="scenesname"
+          label="任务场景"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column prop="name" label="报告名称" show-overflow-tooltip>
         </el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <span>{{ statusObj[scope.row.State] }}</span>
+            <span>{{ statusObj[scope.row.state] }}</span>
           </template>
         </el-table-column>
         <el-table-column label="类型">
           <template slot-scope="scope">
-            <span>{{ scope.row.Type === 0 ? "手动" : "自动" }}</span>
+            <span>{{ scope.row.type === 0 ? "手动" : "自动" }}</span>
           </template>
         </el-table-column>
         <el-table-column label="进度条">
           <template slot-scope="scope">
-            <span>{{ scope.row.RateProgress + "%" }}</span>
+            <span>{{ scope.row.rateprogress + "%" }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="DownloadCount" label="下载次数">
+        <el-table-column prop="downloadcount" label="下载次数">
         </el-table-column>
-        <el-table-column prop="CreateTime" label="创建时间"> </el-table-column>
-        <el-table-column prop="UpdateTime" label="更新时间"> </el-table-column>
-        <el-table-column prop="Remarks" label="备注" show-overflow-tooltip>
+        <el-table-column prop="createtime" label="创建时间"> </el-table-column>
+        <el-table-column prop="updatetime" label="更新时间"> </el-table-column>
+        <el-table-column prop="remarks" label="备注" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="downloadFn(scope.row)"
+              >下载</el-button
+            >
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -63,6 +90,7 @@
 </template>
 
 <script>
+import config from "@/libs/config";
 export default {
   name: "reportlist",
   data() {
@@ -72,6 +100,7 @@ export default {
         pageSize: 10
       },
       queryData: [],
+      scenesArray: [],
       pageCount: 0,
       statusObj: {
         1: "成功",
@@ -89,6 +118,11 @@ export default {
         }
       );
     },
+    queryScene() {
+      this.$fetch("/scenes/index").then(res => {
+        this.scenesArray = res.Data;
+      });
+    },
     pageSizeFn(val) {
       this.queryParams.pageSize = val;
       this.queryFn();
@@ -96,10 +130,15 @@ export default {
     pageChangeFn(val) {
       this.queryParams.pageIndex = val;
       this.queryFn();
+    },
+    downloadFn(row) {
+      window.location.href =
+        config.baseUrl + "File/FileDownload?FilePath=" + row.downloadurl;
     }
   },
   created() {
     this.queryFn();
+    this.queryScene();
   }
 };
 </script>

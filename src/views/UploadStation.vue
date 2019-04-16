@@ -51,6 +51,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="mobilemode" label="制式"> </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="downloadFn(scope.row)"
+              >下载</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-pagination
@@ -91,14 +98,22 @@
       <el-upload
         class="upload-demo"
         drag
-        action="/BaseStation/UploadBaseStation"
+        :action="uploadAction"
         :show-file-list="false"
         :on-success="uploadCompleted"
         :before-upload="uploadValid"
+        :headers="uploadHeaders"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
       </el-upload>
+      <span style="color:red;"
+        >注：工参excel必须完全按照模板内容的格式。<a
+          href="#"
+          @click="downLoadTemplate"
+          >点击下载模板。</a
+        ></span
+      >
       <span slot="footer" class="dialog-footer">
         <el-button @click="addStation = false">取 消</el-button>
         <el-button type="primary" @click="saveStation">保存</el-button>
@@ -108,6 +123,8 @@
 </template>
 
 <script>
+import config from "@/libs/config";
+import store from "@/store";
 export default {
   name: "uploadstation",
   data() {
@@ -135,7 +152,11 @@ export default {
         ],
         Path: [{ required: true, message: "请上传工参", trigger: "blur" }]
       },
-      addStation: false
+      addStation: false,
+      uploadAction: config.baseUrl + "/BaseStation/UploadBaseStation",
+      uploadHeaders: {
+        Token: store.getters.Token
+      }
     };
   },
   methods: {
@@ -225,6 +246,16 @@ export default {
           duration: 0
         });
       }
+    },
+    downLoadTemplate() {
+      window.location.href =
+        config.baseUrl +
+        "File/FileDownload?FilePath=" +
+        config.stationTemplateUrl;
+    },
+    downloadFn(row) {
+      window.location.href =
+        config.baseUrl + "File/FileDownload?FilePath=" + row.path;
     }
   },
   created() {
