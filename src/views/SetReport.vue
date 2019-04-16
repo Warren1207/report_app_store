@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="8">
         <el-input
-          placeholder="请输入内容"
+          placeholder="模板名称"
           v-model="input5"
           readonly
           class="input-with-select"

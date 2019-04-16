@@ -58,7 +58,7 @@ const router = new Router({
         },
         {
           path: "serverList",
-          title: "SKY服务器列表",
+          title: "资源文件上传",
           name: "serverList",
           component: () => import("@/views/ServerList")
         }

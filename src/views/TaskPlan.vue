@@ -2,7 +2,7 @@
   <div class="wrap">
     <el-row>
       <el-col :span="4"
-        ><el-input v-model="queryParams.name" placeholder="工参名称"></el-input
+        ><el-input v-model="queryParams.name" placeholder="计划名称"></el-input
       ></el-col>
       <!-- <el-col :span="4">
         <el-select
@@ -25,7 +25,7 @@
     <div class="opera-wrap">
       <div class="opera-item" @click="addStation = true">
         <i class="icon iconfont icon-xinzeng"></i>
-        <span>添加</span>
+        <span>添加计划</span>
       </div>
       <div class="opera-item" @click="modifyStation()">
         <i class="icon iconfont icon-shanchu"></i>
