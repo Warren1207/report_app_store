@@ -65,6 +65,7 @@
         :data="gridData"
         ref="uploadStationTable"
         @selection-change="chooseInstance"
+        class="removeCheckbox"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="50"> </el-table-column>
@@ -315,7 +316,8 @@ export default {
     }
   }
 }
-thead {
+
+.removeCheckbox thead {
   .el-table-column--selection {
     .cell {
       display: none;
