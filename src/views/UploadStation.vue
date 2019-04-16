@@ -156,7 +156,8 @@ export default {
       uploadAction: config.baseUrl + "/BaseStation/UploadBaseStation",
       uploadHeaders: {
         Token: store.getters.Token
-      }
+      },
+      filePath: ""
     };
   },
   methods: {
@@ -247,11 +248,14 @@ export default {
         });
       }
     },
+    getFilePath() {
+      this.$fetch("/BaseStation/GetBaseStationTemplate").then(res => {
+        this.filePath = res.Data;
+      });
+    },
     downLoadTemplate() {
       window.location.href =
-        config.baseUrl +
-        "File/FileDownload?FilePath=" +
-        config.stationTemplateUrl;
+        config.baseUrl + "File/FileDownload?FilePath=" + this.filePath;
     },
     downloadFn(row) {
       window.location.href =
@@ -260,6 +264,7 @@ export default {
   },
   created() {
     this.queryFn();
+    this.getFilePath();
   }
 };
 </script>
