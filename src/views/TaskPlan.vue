@@ -4,7 +4,7 @@
       <el-col :span="4"
         ><el-input v-model="queryParams.name" placeholder="工参名称"></el-input
       ></el-col>
-      <el-col :span="4">
+      <!-- <el-col :span="4">
         <el-select
           v-model="selectScene_selected"
           clearable
@@ -17,7 +17,7 @@
             :value="item.id"
           >
           </el-option> </el-select
-      ></el-col>
+      ></el-col> -->
       <el-col :span="4" style="text-align: left;">
         <el-button type="primary" @click="queryFn">搜索</el-button>
       </el-col>
@@ -34,6 +34,7 @@
     </div>
     <div class="table-wrap">
       <el-table
+        v-loading="loading"
         ref="uploadStationTable"
         :data="queryData"
         tooltip-effect="dark"
@@ -56,6 +57,21 @@
         </el-table-column>
         <el-table-column prop="lastexecute" label="最后执行"> </el-table-column>
         <el-table-column prop="executecount" label="执行数"> </el-table-column>
+        <el-table-column prop="configuration" label="配置"
+          ><template slot-scope="scope">
+            <el-button
+              size="mini"
+              @click="goConfiguration(scope.$index, scope.row)"
+              >配置</el-button
+            >
+            <!-- <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+              >删除</el-button
+            > -->
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-pagination
@@ -114,7 +130,7 @@
         </el-form-item>
         <el-form-item label="任务场景" prop="selectScene_selected">
           <el-select
-            v-model="selectScene_selected"
+            v-model="stationInfo.selectScene_selected"
             clearable
             placeholder="任务场景"
             style="width: 100%;"
@@ -142,17 +158,22 @@ export default {
   name: "taskplan",
   data() {
     return {
+      loading: false,
       queryParams: {
         pageIndex: 1,
         pageSize: 10
       },
       pageCount: 0,
-      selectScene_selected: "",
+      // selectScene_selected: "",
       queryData: [],
       statusObj: {},
       stationInfo: {
         planname: "",
-        startdate: ""
+        repeattype: "",
+        startdate: "",
+        enddate: "",
+        intervaltime: "",
+        selectScene_selected: ""
       },
       rules: {
         planname: [
@@ -179,9 +200,11 @@ export default {
   },
   methods: {
     queryFn() {
+      this.loading = true;
       this.$fetch("/taskplan/index", this.queryParams).then(res => {
         this.queryData = res.Data;
         this.pageCount = res.TotalCount;
+        this.loading = false;
       });
     },
     selectScene() {
@@ -231,7 +254,11 @@ export default {
               this.addStation = false;
               this.stationInfo = {
                 planname: "",
-                startdate: ""
+                repeattype: "",
+                startdate: "",
+                enddate: "",
+                intervaltime: "",
+                selectScene_selected: ""
               };
               this.queryFn();
             } else {
@@ -239,6 +266,12 @@ export default {
             }
           });
         }
+      });
+    },
+    goConfiguration(parame1, parame2) {
+      this.$router.push({
+        path: "/SetReport",
+        query: { plan_id: parame2.id }
       });
     }
   },

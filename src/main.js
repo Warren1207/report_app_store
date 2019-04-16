@@ -9,7 +9,7 @@ import { post, fetch } from "./libs/http";
 /** iconfont **/
 import "@/assets/iconfont/iconfont.css";
 
-import "./mock"; // 模拟数据
+// import "./mock"; // 模拟数据
 
 Vue.use(ElementUI, { size: "", zIndex: 3000 });
 Vue.config.productionTip = false;

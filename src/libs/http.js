@@ -4,13 +4,13 @@ import router from "@/router";
 import { Message } from "element-ui";
 
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = "";
+axios.defaults.baseURL = "http://10.168.1.120:8030/";
 
 // 路由请求拦截
 // http request 拦截器
 axios.interceptors.request.use(
   config => {
-    config.headers["Token"] = store.Token;
+    config.headers["Token"] = store.getters.Token;
     return config;
   },
   error => {

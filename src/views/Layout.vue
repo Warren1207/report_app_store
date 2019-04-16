@@ -43,7 +43,7 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-container>
+      <el-container style="height: 100%;">
         <el-main>
           <router-view />
         </el-main>

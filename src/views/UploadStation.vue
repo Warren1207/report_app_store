@@ -91,8 +91,9 @@
       <el-upload
         class="upload-demo"
         drag
-        action="/BaseStation/UploadBaseStation"
+        action="http://10.168.1.120:8030/BaseStation/UploadBaseStation"
         :show-file-list="false"
+        :headers="tokenHeaders"
         :on-success="uploadCompleted"
         :before-upload="uploadValid"
       >
@@ -108,6 +109,7 @@
 </template>
 
 <script>
+import store from "@/store";
 export default {
   name: "uploadstation",
   data() {
@@ -117,6 +119,9 @@ export default {
         pageSize: 10
       },
       pageCount: 0,
+      tokenHeaders: {
+        Token: store.getters.Token
+      },
       queryData: [],
       statusObj: {
         1: "启用",
