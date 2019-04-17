@@ -34,7 +34,7 @@
             <span slot="title">计划任务</span>
           </el-menu-item>
           <el-menu-item index="/serverList">
-            <i class="icon iconfont icon-shedingbaogao"></i>
+            <i class="icon iconfont icon-ziyuanwenjianshangchuan"></i>
             <span slot="title">资源文件上传</span>
           </el-menu-item>
         </el-menu>
