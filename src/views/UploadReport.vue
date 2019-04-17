@@ -165,7 +165,10 @@ export default {
       },
       addTemplate: false,
       rules: {
-        Name: [{ required: true, message: "请填写模板名称", trigger: "blur" }],
+        Name: [
+          { required: true, message: "请填写模板名称", trigger: "blur" },
+          { max: 20, message: "长度不能大于 20 个字符", trigger: "blur" }
+        ],
         Path: [{ required: true, message: "请上传模板", trigger: "blur" }],
         XmlPath: [
           { required: true, message: "请上传模板配置", trigger: "blur" }

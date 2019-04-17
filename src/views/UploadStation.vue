@@ -152,9 +152,13 @@ export default {
         Path: ""
       },
       rules: {
-        Name: [{ required: true, message: "请填写工参名称", trigger: "blur" }],
+        Name: [
+          { required: true, message: "请填写工参名称", trigger: "blur" },
+          { max: 20, message: "长度不能大于 20 个字符", trigger: "blur" }
+        ],
         MobileMode: [
-          { required: true, message: "请填写制式", trigger: "blur" }
+          { required: true, message: "请填写制式", trigger: "blur" },
+          { max: 10, message: "长度不能大于 10 个字符", trigger: "blur" }
         ],
         Path: [{ required: true, message: "请上传工参", trigger: "blur" }]
       },
