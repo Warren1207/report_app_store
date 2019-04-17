@@ -34,14 +34,14 @@
             <span slot="title">计划任务</span>
           </el-menu-item>
           <el-menu-item index="/serverList">
-            <i class="icon iconfont icon-jihuarenwu"></i>
+            <i class="icon iconfont icon-shedingbaogao"></i>
             <span slot="title">资源文件上传</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container style="height: 100%;">
-        <el-main>
-          <router-view />
+        <el-main style="height: 100%;">
+          <router-view style="height: 100%;" />
         </el-main>
         <el-footer>© Copyright 2009-2019 报告应用商店</el-footer>
       </el-container>

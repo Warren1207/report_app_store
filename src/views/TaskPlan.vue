@@ -1,23 +1,9 @@
 <template>
   <div class="wrap">
-    <el-row>
+    <el-row :gutter="10">
       <el-col :span="4"
         ><el-input v-model="queryParams.name" placeholder="计划名称"></el-input
       ></el-col>
-      <!-- <el-col :span="4">
-        <el-select
-          v-model="selectScene_selected"
-          clearable
-          placeholder="任务场景"
-        >
-          <el-option
-            v-for="item in statusObj"
-            :key="item.value"
-            :label="item.name"
-            :value="item.id"
-          >
-          </el-option> </el-select
-      ></el-col> -->
       <el-col :span="4" style="text-align: left;">
         <el-button type="primary" @click="queryFn">搜索</el-button>
       </el-col>
@@ -44,32 +30,28 @@
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="55"> </el-table-column>
         <el-table-column prop="planname" label="计划名称"> </el-table-column>
-        <el-table-column prop="repeattype" label="重复类型"> </el-table-column>
         <el-table-column prop="startdate" label="开始日期"> </el-table-column>
         <el-table-column prop="enddate" label="结束日期"> </el-table-column>
         <el-table-column prop="intervaltime" label="间隔时间">
         </el-table-column>
         <el-table-column prop="status" label="状态"> </el-table-column>
-        <el-table-column prop="createuserid" label="创建用户ID">
-        </el-table-column>
         <el-table-column prop="createdate" label="创建时间"> </el-table-column>
-        <el-table-column prop="errormessage" label="错误消息">
-        </el-table-column>
         <el-table-column prop="lastexecute" label="最后执行"> </el-table-column>
         <el-table-column prop="executecount" label="执行数"> </el-table-column>
         <el-table-column prop="configuration" label="配置"
           ><template slot-scope="scope">
             <el-button
               size="mini"
-              @click="goConfiguration(scope.$index, scope.row)"
+              type="primary"
+              @click="goConfiguration(scope.row)"
               >配置</el-button
             >
-            <!-- <el-button
+            <el-button
               size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            > -->
+              type="info"
+              @click="ToViewConfiguration(scope.row)"
+              >查看</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -84,7 +66,7 @@
       :total="pageCount"
     >
     </el-pagination>
-    <el-dialog title="添加" :visible.sync="addStation" width="30%">
+    <el-dialog title="添加计划" :visible.sync="addStation" width="30%">
       <el-form
         ref="stationFrom"
         :model="stationInfo"
@@ -98,27 +80,15 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="重复类型" prop="repeattype">
-          <el-input
-            v-model="stationInfo.repeattype"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="开始时间" prop="startdate">
+        <el-form-item label="时间段" prop="timePeriod">
           <el-date-picker
             style="width: 100%;"
-            v-model="stationInfo.startdate"
-            type="date"
-            placeholder="选择日期"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="结束时间" prop="enddate">
-          <el-date-picker
-            style="width: 100%;"
-            v-model="stationInfo.enddate"
-            type="date"
-            placeholder="选择日期"
+            v-model="stationInfo.timePeriod"
+            type="datetimerange"
+            format="yyyy-MM-dd HH:mm"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
           >
           </el-date-picker>
         </el-form-item>
@@ -164,14 +134,13 @@ export default {
         pageSize: 10
       },
       pageCount: 0,
-      // selectScene_selected: "",
       queryData: [],
       statusObj: {},
       stationInfo: {
         planname: "",
-        repeattype: "",
-        startdate: "",
-        enddate: "",
+        // startdate: "",
+        // enddate: "",
+        timePeriod: [],
         intervaltime: "",
         selectScene_selected: ""
       },
@@ -179,14 +148,8 @@ export default {
         planname: [
           { required: true, message: "请填写计划名称", trigger: "blur" }
         ],
-        repeattype: [
-          { required: true, message: "请填写重复类型", trigger: "blur" }
-        ],
-        startdate: [
-          { required: true, message: "请选择开始时间", trigger: "blur" }
-        ],
-        enddate: [
-          { required: true, message: "请选择结束时间", trigger: "blur" }
+        timePeriod: [
+          { required: true, message: "请选择时间段", trigger: "blur" }
         ],
         intervaltime: [
           { required: true, message: "请填写间隔", trigger: "blur" }
@@ -202,8 +165,12 @@ export default {
     queryFn() {
       this.loading = true;
       this.$fetch("/taskplan/index", this.queryParams).then(res => {
-        this.queryData = res.Data;
-        this.pageCount = res.TotalCount;
+        if (res.State === 0) {
+          this.queryData = res.Data;
+          this.pageCount = res.TotalCount;
+        } else {
+          this.$message.error(res.Message);
+        }
         this.loading = false;
       });
     },
@@ -245,6 +212,8 @@ export default {
     saveStation() {
       this.$refs["stationFrom"].validate(valid => {
         if (valid) {
+          this.stationInfo.startdate = this.stationInfo.timePeriod[0];
+          this.stationInfo.enddate = this.stationInfo.timePeriod[1];
           this.$post("/taskplan/create", this.stationInfo).then(res => {
             if (res.State === 0) {
               this.$message({
@@ -252,14 +221,13 @@ export default {
                 type: "success"
               });
               this.addStation = false;
-              this.stationInfo = {
-                planname: "",
-                repeattype: "",
-                startdate: "",
-                enddate: "",
-                intervaltime: "",
-                selectScene_selected: ""
-              };
+              // this.stationInfo = {
+              //   planname: "",
+              //   timePeriod: [],
+              //   intervaltime: "",
+              //   selectScene_selected: ""
+              // };
+              this.$refs["stationFrom"].resetFields();
               this.queryFn();
             } else {
               this.$message.error("保存失败!");
@@ -268,16 +236,34 @@ export default {
         }
       });
     },
-    goConfiguration(parame1, parame2) {
+    goConfiguration(parame) {
       this.$router.push({
         path: "/SetReport",
-        query: { plan_id: parame2.id }
+        query: { plan_id: parame.id }
       });
+    },
+    ToViewConfiguration(parame) {
+      if (parame.templateids.length !== 0) {
+        let id = parame.templateids[parame.templateids.length - 1];
+        this.$fetch("/TaskPlanReprotTemplate/Details", { id }).then(res => {
+          let dataxml = res.Data.xmlcontent;
+          let dataname = res.Data.reporttemplatename;
+          this.$router.push({
+            path: "/SetReport",
+            query: { dataXml: dataxml, dataName: dataname }
+          });
+        });
+      } else {
+        this.$message.warning("未配置模板,无法查看!");
+      }
     }
   },
   created() {
     this.queryFn();
     this.selectScene();
+    // this.$router.push({
+    //   path: "/SetReport"
+    // });
   }
 };
 </script>

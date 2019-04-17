@@ -8,7 +8,9 @@
           readonly
           class="input-with-select"
         >
-          <el-button slot="append" @click="templatList">选中模板</el-button>
+          <el-button slot="append" v-if="selectIsShow" @click="templatList"
+            >选中模板</el-button
+          >
         </el-input>
       </el-col>
     </el-row>
@@ -19,45 +21,54 @@
         </div>
         <div>
           <el-row type="flex" align="middle" class="createStyle">
-            <el-col
-              :span="8"
-              style="display: flex;"
+            <el-form
+              label-position="right"
+              label-width="180px"
               v-for="item2 in parameterChlid[index]"
               :key="item2.id"
             >
-              <span>{{ item2.name }}：</span>
-              <!-- <el-button type="primary">配置</el-button> -->
-              <el-input
-                v-show="item2.isInput == true"
-                v-model="item2.value"
-                placeholder="请输入内容"
-              ></el-input>
-
-              <el-select
-                v-show="item2.isPullDown == true"
-                v-model="item2.value"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item3 in item2.items"
-                  v-model="item3.label"
-                  :key="item3.value"
+              <el-form-item :label="item2.name">
+                <el-input
+                  v-show="item2.isInput == true"
+                  v-model="item2.value"
+                  :readonly="read_only"
+                  placeholder="请输入内容"
+                ></el-input>
+                <el-select
+                  class="selectStyle"
+                  v-show="item2.isPullDown == true"
+                  v-model="item2.value"
+                  :disabled="read_only"
+                  placeholder="请选择"
                 >
-                </el-option>
-              </el-select>
-              <el-date-picker
-                v-model="item2.value"
-                v-show="item2.isDate == true"
-                value-format="yyyy-MM-dd"
-                placeholder="选择日期"
-              >
-              </el-date-picker>
-            </el-col>
+                  <el-option
+                    v-for="item3 in item2.items"
+                    v-model="item3.label"
+                    :key="item3.value"
+                  >
+                  </el-option>
+                </el-select>
+                <el-date-picker
+                  class="dateStyle"
+                  style="width: 100%;"
+                  v-model="item2.value"
+                  :readonly="read_only"
+                  v-show="item2.isDate == true"
+                  value-format="yyyy-MM-dd"
+                  placeholder="选择日期"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-form>
           </el-row>
         </div>
       </div>
-      <el-button type="primary" v-show="saveIsShow" @click="saveFun"
-        >保存</el-button
+      <el-button
+        type="primary"
+        style="margin-bottom: 20px;"
+        v-show="saveIsShow"
+        @click="saveFun"
+        >{{ whatButton }}</el-button
       >
     </div>
 
@@ -93,9 +104,11 @@ export default {
       input5: "",
       gridData: [],
       dialogTableVisible: false,
-      options: [],
       saveData: "",
       templateId: "",
+      read_only: false,
+      selectIsShow: true,
+      whatButton: "保存",
       saveIsShow: false,
       queryParams: {
         pageIndex: 1,
@@ -103,7 +116,6 @@ export default {
       },
       pageCount: 0,
       parameter: [],
-      // parameter: ["Connections", "SelectCategories", "OutputFileName"],
       parameterChlid: []
       // parameterChlid: [
       //   [
@@ -129,7 +141,6 @@ export default {
         "/ReportTemplate/GetReportTemplateList",
         this.queryParams
       ).then(res => {
-        //console.log(res);
         this.gridData = res.Data;
         this.pageCount = res.TotalCount;
       });
@@ -140,36 +151,130 @@ export default {
         this.$refs["uploadStationTable"].toggleRowSelection(val.pop());
       }
     },
-    publicFun(item, index) {
-      if (item.ComponentType === "DateTimePicker") {
-        this.parameterChlid[index].push({
-          name: item.Text,
-          value: item.Value,
+
+    publicFun(item, array) {
+      if (item.RRRppp_ComponentType === "DateTimePicker") {
+        array.push({
+          name: item.RRRppp_Text,
+          value: item.RRRppp_Value,
           isDate: true
         });
       }
       if (
-        item.ComponentType === "NumberBox" ||
-        item.ComponentType === "TextBox"
+        item.RRRppp_ComponentType === "NumberBox" ||
+        item.RRRppp_ComponentType === "TextBox"
       ) {
-        this.parameterChlid[index].push({
-          name: item.Text,
-          value: item.Value,
+        array.push({
+          name: item.RRRppp_Text,
+          value: item.RRRppp_Value,
           isInput: true
         });
       }
-      if (item.ComponentType === "ListBox") {
+      if (item.RRRppp_ComponentType === "ListBox") {
         let arr = [];
-        item.Items.split(",").forEach(items => {
+        item.RRRppp_Items.split(",").forEach(items => {
           arr.push({ label: items });
         });
-        this.parameterChlid[index].push({
-          name: item.Text,
-          value: item.Value,
+        array.push({
+          name: item.RRRppp_Text,
+          value: item.RRRppp_Value,
           items: arr,
           isPullDown: true
         });
       }
+      // if (item.RRRppp_ComponentType === "MultiplTreeView") {
+      // }
+      // if (item.RRRppp_ComponentType === "FolderBrowserDialog") {
+      // }
+      // if (item.RRRppp_ComponentType === "CheckBox") {
+      // }
+    },
+    sharingFun(data) {
+      this.saveData = data;
+      this.parameter = [];
+      this.parameterChlid = [];
+      // this.parameterChlid = [[], [], [], [], [], [], [], [], [], [], []];
+
+      // let count = -1;
+
+      for (let key in data) {
+        let parameterChlidArray = new Array();
+        this.parameterChlid.push(parameterChlidArray);
+        let keys = data[key];
+
+        // if (keys && keys.RRRppp_ComponentType) {
+        //   this.parameter.push(keys.RRRppp_Text);
+        //   this.publicFun(keys, parameterChlidArray);
+        // } else if (keys && !keys.RRRppp_ComponentType) {
+        //   this.parameter.push(keys.RRRppp_Text);
+        //   for (let traverse in keys) {
+        //     let traverse1 = keys[traverse];
+        //     if (typeof traverse1 === "object") {
+        //       for (let traverse2 in traverse1) {
+        //         let traverse3 = traverse1[traverse2];
+        //         if (traverse3.RRRppp_ComponentType) {
+        //           this.publicFun(traverse3, parameterChlidArray);
+        //         } else if (!traverse3.RRRppp_ComponentType) {
+        //           for (let traverse4 in traverse3) {
+        //             let traverse5 = traverse3[traverse4];
+        //             if (typeof traverse5 === "object") {
+        //               for (let traverse6 in traverse5) {
+        //                 let traverse7 = traverse5[traverse6];
+        //                 if (traverse7.RRRppp_ComponentType) {
+        //                   this.publicFun(traverse7, parameterChlidArray);
+        //                 }
+        //               }
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+
+        if (keys && keys.RRRppp_Text === "Connections") {
+          // count++;
+          this.parameter.push(keys.RRRppp_Text);
+          keys.Connection.Property.forEach(item => {
+            this.publicFun(item, parameterChlidArray);
+          });
+        } else if (keys && keys.RRRppp_Text === "Select Categories") {
+          // eslin -disable-next-line
+        } else if (keys && keys.RRRppp_Text === "Output File Name") {
+          // count++;
+          this.parameter.push(keys.RRRppp_Text);
+          this.publicFun(keys, parameterChlidArray);
+        } else if (keys && keys.RRRppp_Text === "Output Directory") {
+          // eslin -disable-next-line
+        } else if (keys && keys.RRRppp_Text === "Output Type") {
+          // count++;
+          this.parameter.push(keys.RRRppp_Text);
+          this.publicFun(keys, parameterChlidArray);
+        } else if (keys && keys.RRRppp_Text === "Save By Category") {
+          // eslin -disable-next-line
+        } else if (keys && keys.RRRppp_Text === "Project Map Source") {
+          // count++;
+          this.parameter.push(keys.RRRppp_Text);
+          this.publicFun(keys, parameterChlidArray);
+        } else if (keys && keys.RRRppp_Text === "Customs") {
+          // count++;
+          this.parameter.push(keys.RRRppp_Text);
+          keys.Custom.forEach(item => {
+            this.publicFun(item, parameterChlidArray);
+          });
+        }
+        if (parameterChlidArray.length === 0) {
+          this.parameterChlid.splice(
+            this.parameterChlid.indexOf(parameterChlidArray),
+            1
+          );
+          // this.parameter.splice(this.parameter.indexOf(keys.RRRppp_Text), 1);
+        }
+      }
+      // console.warn(this.parameter);
+      // console.log(this.parameterChlid);
+      this.saveIsShow = true;
+      this.loading = false;
     },
     saveTemplate() {
       this.loading = true;
@@ -181,49 +286,8 @@ export default {
         this.$fetch("/ReportTemplate/GetReportTemplateXml", {
           id: this.templateId
         }).then(res => {
-          let data = JSON.parse(res.Data.replace(/@/g, "")).Parameters;
-          this.saveData = data;
-          this.parameter = [];
-          this.parameterChlid = [[], [], [], [], [], [], [], [], [], [], []];
-
-          let count = -1;
-
-          for (let key in data) {
-            let keys = data[key];
-            if (keys && keys.Text === "Connections") {
-              count++;
-              this.parameter.push(keys.Text);
-              keys.Connection.Property.forEach(item => {
-                this.publicFun(item, count);
-              });
-            } else if (keys && keys.Text === "Select Categories") {
-              // eslin -disable-next-line
-            } else if (keys && keys.Text === "Output File Name") {
-              count++;
-              this.parameter.push(keys.Text);
-              this.publicFun(keys, count);
-            } else if (keys && keys.Text === "Output Directory") {
-              // eslin -disable-next-line
-            } else if (keys && keys.Text === "Output Type") {
-              count++;
-              this.parameter.push(keys.Text);
-              this.publicFun(keys, count);
-            } else if (keys && keys.Text === "Save By Category") {
-              // eslin -disable-next-line
-            } else if (keys && keys.Text === "Project Map Source") {
-              count++;
-              this.parameter.push(keys.Text);
-              this.publicFun(keys, count);
-            } else if (keys && keys.Text === "Customs") {
-              count++;
-              this.parameter.push(keys.Text);
-              keys.Custom.forEach(item => {
-                this.publicFun(item, count);
-              });
-            }
-          }
-          this.saveIsShow = true;
-          this.loading = false;
+          let data = JSON.parse(res.Data.replace(/@/g, "RRRppp_")).Parameters;
+          this.sharingFun(data);
         });
       } else {
         this.loading = false;
@@ -231,71 +295,85 @@ export default {
       }
     },
     saveFun() {
-      this.loading = true;
-      let count2 = -1;
-      for (let key in this.saveData) {
-        let keys = this.saveData[key];
+      if (this.whatButton === "保存") {
+        this.loading = true;
+        let count2 = -1;
+        for (let key in this.saveData) {
+          let keys = this.saveData[key];
 
-        if (keys && keys.Text === "Connections") {
-          count2++;
-          keys.Connection.Property.forEach((item, index) => {
-            item.Value = this.parameterChlid[count2][index].value;
-          });
-        } else if (keys && keys.Text === "Select Categories") {
-          // eslin -disable-next-line
-        } else if (keys && keys.Text === "Output File Name") {
-          count2++;
-          keys.Value = this.parameterChlid[count2][0].value;
-        } else if (keys && keys.Text === "Output Directory") {
-          // eslin -disable-next-line
-        } else if (keys && keys.Text === "Output Type") {
-          count2++;
-          keys.Value = this.parameterChlid[count2][0].value;
-        } else if (keys && keys.Text === "Save By Category") {
-          // eslin -disable-next-line
-        } else if (keys && keys.Text === "Project Map Source") {
-          count2++;
-          keys.Value = this.parameterChlid[count2][0].value;
-        } else if (keys && keys.Text === "Customs") {
-          count2++;
-          let count3 = -1;
-          keys.Custom.forEach(item => {
-            if (
-              item.ComponentType &&
-              item.ComponentType !== "OpenFileDialog" &&
-              item.ComponentType !== "FolderBrowserDialog" &&
-              item.ComponentType !== "SaveFileDialog"
-            ) {
-              count3++;
-              item.Value = this.parameterChlid[count2][count3].value;
-            }
-          });
+          if (keys && keys.RRRppp_Text === "Connections") {
+            count2++;
+            keys.Connection.Property.forEach((item, index) => {
+              item.RRRppp_Value = this.parameterChlid[count2][index].value;
+            });
+          } else if (keys && keys.RRRppp_Text === "Select Categories") {
+            // eslin -disable-next-line
+          } else if (keys && keys.RRRppp_Text === "Output File Name") {
+            count2++;
+            keys.RRRppp_Value = this.parameterChlid[count2][0].value;
+          } else if (keys && keys.RRRppp_Text === "Output Directory") {
+            // eslin -disable-next-line
+          } else if (keys && keys.RRRppp_Text === "Output Type") {
+            count2++;
+            keys.RRRppp_Value = this.parameterChlid[count2][0].value;
+          } else if (keys && keys.RRRppp_Text === "Save By Category") {
+            // eslin -disable-next-line
+          } else if (keys && keys.RRRppp_Text === "Project Map Source") {
+            count2++;
+            keys.RRRppp_Value = this.parameterChlid[count2][0].value;
+          } else if (keys && keys.RRRppp_Text === "Customs") {
+            count2++;
+            let count3 = -1;
+            keys.Custom.forEach(item => {
+              if (
+                item.RRRppp_ComponentType &&
+                item.RRRppp_ComponentType !== "OpenFileDialog" &&
+                item.RRRppp_ComponentType !== "FolderBrowserDialog" &&
+                item.RRRppp_ComponentType !== "SaveFileDialog"
+              ) {
+                count3++;
+                item.RRRppp_Value = this.parameterChlid[count2][count3].value;
+              }
+            });
+          }
         }
+        this.$post("/TaskPlanReprotTemplate/Create", {
+          taskplanid: this.$route.query.plan_id,
+          reporttemplateid: this.templateId,
+          xmlparams: JSON.stringify(this.saveData).replace(/RRRppp_/g, "@")
+        }).then(res => {
+          if (res.State === 0) {
+            this.$message({
+              message: "保存成功！",
+              type: "success"
+            });
+            this.$route.query.plan_id = "";
+            this.templateId = "";
+            this.$router.push({ path: "/TaskPlan" });
+            this.saveIsShow = false;
+          } else {
+            this.$message.error(res.Message);
+          }
+          this.parameter = [];
+          this.parameterChlid = [];
+          this.loading = false;
+        });
+      } else {
+        this.$router.push({ path: "/TaskPlan" });
       }
-      this.$post("/TaskPlanReprotTemplate/Create", {
-        taskplanid: this.$route.query.plan_id,
-        reporttemplateid: this.templateId,
-        xmlparams: this.saveData
-      }).then(res => {
-        if (res.State === 0) {
-          this.$message({
-            message: "操作成功！",
-            type: "success"
-          });
-          this.$route.query.plan_id = "";
-          this.templateId = "";
-          this.$router.push({ path: "/TaskPlan" });
-          this.saveIsShow = false;
-        } else {
-          this.$message.error("操作失败！");
-        }
-        this.parameter = [];
-        this.parameterChlid = [];
-        this.loading = false;
-      });
     }
   },
-  created() {}
+  created() {
+    if (this.$route.query.dataXml) {
+      this.selectIsShow = false;
+      this.read_only = true;
+      this.input5 = this.$route.query.dataName;
+      this.whatButton = "关闭";
+      let data = JSON.parse(this.$route.query.dataXml.replace(/@/g, "RRRppp_"))
+        .Parameters;
+      this.sharingFun(data);
+    }
+  }
 };
 </script>
 
@@ -330,5 +408,11 @@ export default {
       display: none;
     }
   }
+}
+.dateStyle.el-input--suffix .el-input__inner {
+  padding-right: 0;
+}
+.selectStyle > .el-input--suffix .el-input__inner {
+  padding-right: 15px;
 }
 </style>

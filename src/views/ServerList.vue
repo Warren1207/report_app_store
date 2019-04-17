@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <el-row>
+    <el-row :gutter="10">
       <el-col :span="4"
         ><el-input v-model="queryParams.name" placeholder="文件名称"></el-input
       ></el-col>
@@ -20,6 +20,7 @@
     </div>
     <div class="table-wrap">
       <el-table
+        v-loading="loading"
         ref="uploadStationTable"
         :data="queryData"
         tooltip-effect="dark"
@@ -85,7 +86,6 @@
             :data="paramRt"
             :show-file-list="false"
             :on-success="uploadCompletedRt"
-            :before-upload="uploadValidRt"
             :headers="uploadHeaders"
           >
             <el-button size="small" type="primary">点击上传</el-button>
@@ -107,6 +107,7 @@ export default {
   name: "serverlist",
   data() {
     return {
+      loading: false,
       queryParams: {
         pageIndex: 1,
         pageSize: 10
@@ -134,10 +135,12 @@ export default {
   },
   methods: {
     queryFn() {
+      this.loading = true;
       this.$fetch("/TemplateResourceManage/Index", this.queryParams).then(
         res => {
           this.queryData = res.Data;
           this.pageCount = res.TotalCount;
+          this.loading = false;
         }
       );
     },
@@ -171,17 +174,6 @@ export default {
         });
       }
     },
-    uploadValidRt(file) {
-      const type = file.name.replace(/.+\./, "").toLowerCase();
-      let isRT = false;
-      if (type === "rtlx" || type === "rtl") {
-        isRT = true;
-      }
-      if (!isRT) {
-        this.$message.error("只能上传rtlx、rtl文件!");
-      }
-      return isRT;
-    },
     uploadCompletedRt(res) {
       if (res.State === 0) {
         this.$message({
@@ -213,6 +205,7 @@ export default {
                   // Name: "",
                   fileurl: ""
                 };
+                this.$refs["templateFrom"].resetFields();
                 this.queryFn();
               } else {
                 this.$message.error("保存失败!");
