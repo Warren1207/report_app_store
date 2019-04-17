@@ -1,10 +1,10 @@
 <template>
   <div class="wrap">
-    <el-row>
+    <el-row :gutter="10">
       <el-col :span="4"
         ><el-input v-model="queryParams.name" placeholder="工参名称"></el-input
       ></el-col>
-      <el-col :span="4">
+      <el-col :span="3">
         <el-select v-model="queryParams.status" clearable placeholder="状态">
           <el-option label="启用" :value="1"> </el-option>
           <el-option label="停用" :value="2"> </el-option>
