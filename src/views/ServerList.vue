@@ -13,7 +13,7 @@
         <i class="icon iconfont icon-xinzeng"></i>
         <span>添加文件</span>
       </div>
-      <div class="opera-item" @click="modifyStation()">
+      <div class="opera-item" @click="delFn()">
         <i class="icon iconfont icon-shanchu"></i>
         <span>删除</span>
       </div>
@@ -22,12 +22,13 @@
       <el-table
         v-loading="loading"
         ref="uploadStationTable"
+        highlight-current-row
+        @current-change="handleCurrentChange"
         :data="queryData"
         tooltip-effect="dark"
         style="width: 100%"
         height="100%"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="55"> </el-table-column>
         <el-table-column prop="filename" label="文件名称" show-overflow-tooltip>
         </el-table-column>
@@ -130,10 +131,14 @@ export default {
         config.baseUrl + "TemplateResourceManage/UploadTemplateResource",
       uploadHeaders: {
         Token: store.getters.Token
-      }
+      },
+      currentRow: null
     };
   },
   methods: {
+    handleCurrentChange(val) {
+      this.currentRow = val;
+    },
     queryFn() {
       this.loading = true;
       this.$fetch("/TemplateResourceManage/Index", this.queryParams).then(
@@ -152,25 +157,30 @@ export default {
       this.queryParams.pageIndex = val;
       this.queryFn();
     },
-    modifyStation() {
-      const selected = this.$refs["uploadStationTable"].selection;
-      if (selected.length !== 1) {
+    delFn() {
+      if (this.currentRow === null) {
         this.$message({
           message: "请选择一条数据！",
           type: "warning"
         });
       } else {
-        const Id = selected[0].id;
-        this.$post("/TemplateResourceManage/Delete", { Id }).then(res => {
-          if (res.State === 0) {
-            this.$message({
-              message: "操作成功！",
-              type: "success"
-            });
-            this.queryFn();
-          } else {
-            this.$message.error("操作失败！");
-          }
+        const Id = this.currentRow.id;
+        this.$confirm("是否确认删除此数据?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          this.$post("/TemplateResourceManage/Delete", { Id }).then(res => {
+            if (res.State === 0) {
+              this.$message({
+                message: "操作成功！",
+                type: "success"
+              });
+              this.queryFn();
+            } else {
+              this.$message.error("操作失败！");
+            }
+          });
         });
       }
     },

@@ -112,6 +112,15 @@
             placeholder="任务场景"
             style="width: 100%;"
           >
+            <el-option :value="stationInfo.selectScene_selected">
+              <div @click="showAddScene" style="height:100%;">
+                <span style="float: left">添加场景</span>
+                <span
+                  class="el-icon-circle-plus-outline"
+                  style="float: right; color: #8492a6; font-size: 19px;line-height: 30px;"
+                ></span>
+              </div>
+            </el-option>
             <el-option
               v-for="item in statusObj"
               :key="item.value"
@@ -272,6 +281,38 @@ export default {
     handleClick() {
       this.$nextTick(function() {
         this.stationInfo.intervaltime = parseInt(this.stationInfo.intervaltime);
+      });
+    },
+    showAddScene() {
+      this.$prompt("请输入场景名称", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputErrorMessage: "最多输入50个字符",
+        inputValidator: function(vStr) {
+          if (vStr.length > 50) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }).then(({ value }) => {
+        if (value.trim()) {
+          this.$post("/Scenes/Create", { name: value })
+            .then(res => {
+              if (res.State === 0) {
+                this.$message({
+                  message: "保存成功！",
+                  type: "success"
+                });
+                this.selectScene();
+              } else {
+                this.$message.error("保存失败!");
+              }
+            })
+            .catch(() => {
+              this.$message.error("最多输入50个字符");
+            });
+        }
       });
     }
   },

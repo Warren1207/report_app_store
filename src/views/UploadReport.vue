@@ -1,10 +1,10 @@
 <template>
   <div class="wrap">
-    <el-row>
+    <el-row :gutter="10">
       <el-col :span="4"
         ><el-input v-model="queryParams.name" placeholder="工参名称"></el-input
       ></el-col>
-      <el-col :span="4">
+      <el-col :span="3">
         <el-select v-model="queryParams.status" clearable placeholder="状态">
           <el-option label="启用" :value="1"> </el-option>
           <el-option label="停用" :value="2"> </el-option>
@@ -35,12 +35,13 @@
     <div class="table-wrap">
       <el-table
         ref="uploadStationTable"
+        highlight-current-row
+        @current-change="handleCurrentChange"
         :data="queryData"
         tooltip-effect="dark"
         style="width: 100%"
         height="100%"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="55"> </el-table-column>
         <el-table-column prop="name" label="模板名称" show-overflow-tooltip>
         </el-table-column>
@@ -165,7 +166,10 @@ export default {
       },
       addTemplate: false,
       rules: {
-        Name: [{ required: true, message: "请填写模板名称", trigger: "blur" }],
+        Name: [
+          { required: true, message: "请填写模板名称", trigger: "blur" },
+          { max: 20, message: "长度不能大于 20 个字符", trigger: "blur" }
+        ],
         Path: [{ required: true, message: "请上传模板", trigger: "blur" }],
         XmlPath: [
           { required: true, message: "请上传模板配置", trigger: "blur" }
@@ -180,10 +184,14 @@ export default {
       uploadRtUrl: config.baseUrl + "ReportTemplate/UploadReportTemplate",
       uploadHeaders: {
         Token: store.getters.Token
-      }
+      },
+      currentRow: null
     };
   },
   methods: {
+    handleCurrentChange(val) {
+      this.currentRow = val;
+    },
     queryFn() {
       this.$fetch(
         "/ReportTemplate/GetReportTemplateList",
@@ -217,14 +225,13 @@ export default {
       );
     },
     modifyStation(Status) {
-      const selected = this.$refs["uploadStationTable"].selection;
-      if (selected.length !== 1) {
+      if (this.currentRow === null) {
         this.$message({
           message: "请选择一条数据！",
           type: "warning"
         });
       } else {
-        const Id = selected[0].id;
+        const Id = this.currentRow.id;
         if (Status === 3) {
           this.$confirm("是否确认删除此数据?", "提示", {
             confirmButtonText: "确定",
