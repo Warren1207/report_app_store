@@ -103,6 +103,9 @@ export default {
   background-color: #fafafa;
   color: #333;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 .el-menu {
   border-right: 0;
@@ -113,6 +116,9 @@ export default {
 }
 .el-menu-item i {
   color: #ffffff;
+}
+.el-menu-item.is-active i {
+  color: rgb(0, 87, 255);
 }
 body > .el-container {
   margin-bottom: 40px;

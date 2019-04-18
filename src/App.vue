@@ -35,11 +35,13 @@ body {
   }
 }
 .wrap {
-  height: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   .table-wrap {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     padding: 15px 0;
   }
