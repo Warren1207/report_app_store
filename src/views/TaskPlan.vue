@@ -34,15 +34,31 @@
         </el-table-column>
         <el-table-column prop="planname" label="计划名称" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="startdate" label="开始日期"> </el-table-column>
-        <el-table-column prop="enddate" label="结束日期"> </el-table-column>
+        <el-table-column
+          prop="startdate"
+          label="开始日期"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column prop="enddate" label="结束日期" show-overflow-tooltip>
+        </el-table-column>
         <el-table-column prop="intervaltime" label="间隔时间(天)">
         </el-table-column>
         <!-- <el-table-column prop="status" label="状态"> </el-table-column> -->
-        <el-table-column prop="createdate" label="创建时间"> </el-table-column>
-        <el-table-column prop="lastexecute" label="最后执行"> </el-table-column>
+        <el-table-column
+          prop="createdate"
+          label="创建时间"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="lastexecute"
+          label="最后执行"
+          show-overflow-tooltip
+        >
+        </el-table-column>
         <el-table-column prop="executecount" label="执行数"> </el-table-column>
-        <el-table-column prop="configuration" label="配置"
+        <el-table-column prop="configuration" min-width="100px" label="配置"
           ><template slot-scope="scope">
             <el-button
               size="mini"
