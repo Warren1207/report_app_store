@@ -29,12 +29,13 @@
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="55"> </el-table-column>
+        <el-table-column prop="scenesname" label="场景"> </el-table-column>
         <el-table-column prop="planname" label="计划名称"> </el-table-column>
         <el-table-column prop="startdate" label="开始日期"> </el-table-column>
         <el-table-column prop="enddate" label="结束日期"> </el-table-column>
-        <el-table-column prop="intervaltime" label="间隔时间">
+        <el-table-column prop="intervaltime" label="间隔时间(天)">
         </el-table-column>
-        <el-table-column prop="status" label="状态"> </el-table-column>
+        <!-- <el-table-column prop="status" label="状态"> </el-table-column> -->
         <el-table-column prop="createdate" label="创建时间"> </el-table-column>
         <el-table-column prop="lastexecute" label="最后执行"> </el-table-column>
         <el-table-column prop="executecount" label="执行数"> </el-table-column>
@@ -77,12 +78,14 @@
         <el-form-item label="计划名称" prop="planname">
           <el-input
             v-model="stationInfo.planname"
+            maxlength="50"
             autocomplete="off"
           ></el-input>
         </el-form-item>
         <el-form-item label="时间段" prop="timePeriod">
           <el-date-picker
             style="width: 100%;"
+            :picker-options="pickerOptions"
             v-model="stationInfo.timePeriod"
             type="datetimerange"
             format="yyyy-MM-dd HH:mm"
@@ -92,15 +95,19 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="间隔" prop="intervaltime">
-          <el-input
+        <el-form-item label="间隔(天)" prop="intervaltime">
+          <el-input-number
+            style="width: 100%;"
             v-model="stationInfo.intervaltime"
-            autocomplete="off"
-          ></el-input>
+            @change="handleClick"
+            :min="1"
+            :max="30"
+            label="请输入间隔时间(1-30)"
+          ></el-input-number>
         </el-form-item>
-        <el-form-item label="任务场景" prop="selectScene_selected">
+        <el-form-item label="任务场景" prop="scenesname">
           <el-select
-            v-model="stationInfo.selectScene_selected"
+            v-model="stationInfo.scenesname"
             clearable
             placeholder="任务场景"
             style="width: 100%;"
@@ -109,7 +116,7 @@
               v-for="item in statusObj"
               :key="item.value"
               :label="item.name"
-              :value="item.id"
+              :value="item.name"
             >
             </el-option>
           </el-select>
@@ -142,7 +149,7 @@ export default {
         // enddate: "",
         timePeriod: [],
         intervaltime: "",
-        selectScene_selected: ""
+        scenesname: ""
       },
       rules: {
         planname: [
@@ -154,9 +161,14 @@ export default {
         intervaltime: [
           { required: true, message: "请填写间隔", trigger: "blur" }
         ],
-        selectScene_selected: [
+        scenesname: [
           { required: true, message: "请选择任务场景", trigger: "blur" }
         ]
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7;
+        }
       },
       addStation: false
     };
@@ -225,7 +237,7 @@ export default {
               //   planname: "",
               //   timePeriod: [],
               //   intervaltime: "",
-              //   selectScene_selected: ""
+              //   scenesname: ""
               // };
               this.$refs["stationFrom"].resetFields();
               this.queryFn();
@@ -256,6 +268,11 @@ export default {
       } else {
         this.$message.warning("未配置模板,无法查看!");
       }
+    },
+    handleClick() {
+      this.$nextTick(function() {
+        this.stationInfo.intervaltime = parseInt(this.stationInfo.intervaltime);
+      });
     }
   },
   created() {

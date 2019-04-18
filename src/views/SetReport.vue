@@ -193,86 +193,60 @@ export default {
       this.saveData = data;
       this.parameter = [];
       this.parameterChlid = [];
-      // this.parameterChlid = [[], [], [], [], [], [], [], [], [], [], []];
-
-      // let count = -1;
 
       for (let key in data) {
         let parameterChlidArray = new Array();
         this.parameterChlid.push(parameterChlidArray);
         let keys = data[key];
-
-        // if (keys && keys.RRRppp_ComponentType) {
-        //   this.parameter.push(keys.RRRppp_Text);
-        //   this.publicFun(keys, parameterChlidArray);
-        // } else if (keys && !keys.RRRppp_ComponentType) {
-        //   this.parameter.push(keys.RRRppp_Text);
-        //   for (let traverse in keys) {
-        //     let traverse1 = keys[traverse];
-        //     if (typeof traverse1 === "object") {
-        //       for (let traverse2 in traverse1) {
-        //         let traverse3 = traverse1[traverse2];
-        //         if (traverse3.RRRppp_ComponentType) {
-        //           this.publicFun(traverse3, parameterChlidArray);
-        //         } else if (!traverse3.RRRppp_ComponentType) {
-        //           for (let traverse4 in traverse3) {
-        //             let traverse5 = traverse3[traverse4];
-        //             if (typeof traverse5 === "object") {
-        //               for (let traverse6 in traverse5) {
-        //                 let traverse7 = traverse5[traverse6];
-        //                 if (traverse7.RRRppp_ComponentType) {
-        //                   this.publicFun(traverse7, parameterChlidArray);
-        //                 }
-        //               }
-        //             }
-        //           }
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-
-        if (keys && keys.RRRppp_Text === "Connections") {
-          // count++;
-          this.parameter.push(keys.RRRppp_Text);
-          keys.Connection.Property.forEach(item => {
-            this.publicFun(item, parameterChlidArray);
-          });
-        } else if (keys && keys.RRRppp_Text === "Select Categories") {
-          // eslin -disable-next-line
-        } else if (keys && keys.RRRppp_Text === "Output File Name") {
-          // count++;
+        if (keys && keys.RRRppp_ComponentType) {
           this.parameter.push(keys.RRRppp_Text);
           this.publicFun(keys, parameterChlidArray);
-        } else if (keys && keys.RRRppp_Text === "Output Directory") {
-          // eslin -disable-next-line
-        } else if (keys && keys.RRRppp_Text === "Output Type") {
-          // count++;
+        } else if (keys && !keys.RRRppp_ComponentType) {
           this.parameter.push(keys.RRRppp_Text);
-          this.publicFun(keys, parameterChlidArray);
-        } else if (keys && keys.RRRppp_Text === "Save By Category") {
-          // eslin -disable-next-line
-        } else if (keys && keys.RRRppp_Text === "Project Map Source") {
-          // count++;
-          this.parameter.push(keys.RRRppp_Text);
-          this.publicFun(keys, parameterChlidArray);
-        } else if (keys && keys.RRRppp_Text === "Customs") {
-          // count++;
-          this.parameter.push(keys.RRRppp_Text);
-          keys.Custom.forEach(item => {
-            this.publicFun(item, parameterChlidArray);
-          });
+          for (let traverse in keys) {
+            let traverse1 = keys[traverse];
+            if (traverse1 instanceof Array) {
+              traverse1.forEach(traverse8 => {
+                if (traverse8.RRRppp_ComponentType) {
+                  this.publicFun(traverse8, parameterChlidArray);
+                }
+              });
+            } else if (traverse1 instanceof Object) {
+              if (traverse1.RRRppp_ComponentType) {
+                this.publicFun(keys, parameterChlidArray);
+              } else {
+                for (let traverse2 in traverse1) {
+                  let traverse3 = traverse1[traverse2];
+                  if (traverse3 instanceof Array) {
+                    traverse3.forEach(traverse4 => {
+                      if (traverse4.RRRppp_ComponentType) {
+                        this.publicFun(traverse4, parameterChlidArray);
+                      }
+                    });
+                  } else if (traverse3 instanceof Object) {
+                    // if (traverse3.RRRppp_ComponentType) {
+                    //   this.publicFun(keys, parameterChlidArray);
+                    // } else {
+                    //   for (let traverse4 in traverse3) {
+                    //     console.log(traverse4);
+                    //   }
+                    // }
+                  }
+                }
+              }
+            }
+          }
         }
         if (parameterChlidArray.length === 0) {
           this.parameterChlid.splice(
             this.parameterChlid.indexOf(parameterChlidArray),
             1
           );
-          // this.parameter.splice(this.parameter.indexOf(keys.RRRppp_Text), 1);
+          if (keys) {
+            this.parameter.splice(this.parameter.indexOf(keys.RRRppp_Text), 1);
+          }
         }
       }
-      // console.warn(this.parameter);
-      // console.log(this.parameterChlid);
       this.saveIsShow = true;
       this.loading = false;
     },

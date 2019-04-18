@@ -192,7 +192,6 @@ export default {
     saveTemplate() {
       this.$refs["templateFrom"].validate(valid => {
         if (valid) {
-          console.log(this.templateInfo);
           this.$post("/TemplateResourceManage/Create", this.templateInfo).then(
             res => {
               if (res.State === 0) {
