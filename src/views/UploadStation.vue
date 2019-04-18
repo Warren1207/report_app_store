@@ -164,12 +164,13 @@ export default {
         Path: [{ required: true, message: "请上传工参", trigger: "blur" }]
       },
       addStation: false,
-      uploadAction: config.baseUrl + "/BaseStation/UploadBaseStation",
+      uploadAction: config.baseUrl + "BaseStation/UploadBaseStation",
       uploadHeaders: {
         Token: store.getters.Token
       },
       filePath: "",
-      currentRow: null
+      currentRow: null,
+      loading: null
     };
   },
   methods: {
@@ -255,10 +256,18 @@ export default {
       const isExcel = file.name.replace(/.+\./, "").toLowerCase() === "xlsx";
       if (!isExcel) {
         this.$message.error("上传工参只能是 xlsx 格式!");
+      } else {
+        this.loading = this.$loading({
+          lock: true,
+          text: "上传...",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.7)"
+        });
       }
       return isExcel;
     },
     uploadCompleted(res) {
+      this.loading.close();
       if (res.State === 0) {
         this.$message({
           message: "上传成功！",
@@ -268,6 +277,7 @@ export default {
       } else {
         this.$notify.error({
           title: "工参上传错误",
+          dangerouslyUseHTMLString: true,
           message: res.Message,
           duration: 0
         });
