@@ -41,7 +41,7 @@
       </el-aside>
       <el-container>
         <el-main>
-          <router-view style="height: 100%;" />
+          <router-view />
         </el-main>
         <el-footer>© Copyright 2009-2019 报告应用商店</el-footer>
       </el-container>

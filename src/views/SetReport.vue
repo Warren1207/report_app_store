@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading">
+  <div class="wrap" style="height:0;" v-loading="loading">
     <el-row>
       <el-col :span="8">
         <el-input

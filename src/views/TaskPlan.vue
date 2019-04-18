@@ -21,16 +21,19 @@
     <div class="table-wrap">
       <el-table
         v-loading="loading"
+        highlight-current-row
+        @current-change="handleCurrentChange"
         ref="uploadStationTable"
         :data="queryData"
         tooltip-effect="dark"
         style="width: 100%"
         height="100%"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="55"> </el-table-column>
-        <el-table-column prop="scenesname" label="场景"> </el-table-column>
-        <el-table-column prop="planname" label="计划名称"> </el-table-column>
+        <el-table-column prop="scenesname" label="场景" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column prop="planname" label="计划名称" show-overflow-tooltip>
+        </el-table-column>
         <el-table-column prop="startdate" label="开始日期"> </el-table-column>
         <el-table-column prop="enddate" label="结束日期"> </el-table-column>
         <el-table-column prop="intervaltime" label="间隔时间(天)">
@@ -150,6 +153,7 @@ export default {
         pageSize: 10
       },
       pageCount: 0,
+      currentRow: null,
       queryData: [],
       statusObj: {},
       stationInfo: {
@@ -209,14 +213,13 @@ export default {
       this.queryFn();
     },
     modifyStation() {
-      const selected = this.$refs["uploadStationTable"].selection;
-      if (selected.length !== 1) {
+      if (this.currentRow === null) {
         this.$message({
           message: "请选择一条数据！",
           type: "warning"
         });
       } else {
-        const Id = selected[0].id;
+        const Id = this.currentRow.id;
         this.$post("/taskplan/delete", { id: Id }).then(res => {
           if (res.State === 0) {
             this.$message({
@@ -277,6 +280,9 @@ export default {
       } else {
         this.$message.warning("未配置模板,无法查看!");
       }
+    },
+    handleCurrentChange(val) {
+      this.currentRow = val;
     },
     handleClick() {
       this.$nextTick(function() {
