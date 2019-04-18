@@ -33,10 +33,10 @@
         ref="reportTable"
         :data="queryData"
         tooltip-effect="dark"
+        highlight-current-row
         style="width: 100%"
         height="100%"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="55"> </el-table-column>
         <el-table-column
           prop="scenesname"

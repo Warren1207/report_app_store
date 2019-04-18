@@ -39,8 +39,8 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-container style="height: 100%;">
-        <el-main style="height: 100%;">
+      <el-container>
+        <el-main>
           <router-view style="height: 100%;" />
         </el-main>
         <el-footer>© Copyright 2009-2019 报告应用商店</el-footer>

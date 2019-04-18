@@ -35,12 +35,13 @@
     <div class="table-wrap">
       <el-table
         ref="uploadStationTable"
+        highlight-current-row
+        @current-change="handleCurrentChange"
         :data="queryData"
         tooltip-effect="dark"
         style="width: 100%"
         height="100%"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="55"> </el-table-column>
         <el-table-column prop="name" label="模板名称" show-overflow-tooltip>
         </el-table-column>
@@ -183,10 +184,14 @@ export default {
       uploadRtUrl: config.baseUrl + "ReportTemplate/UploadReportTemplate",
       uploadHeaders: {
         Token: store.getters.Token
-      }
+      },
+      currentRow: null
     };
   },
   methods: {
+    handleCurrentChange(val) {
+      this.currentRow = val;
+    },
     queryFn() {
       this.$fetch(
         "/ReportTemplate/GetReportTemplateList",
@@ -220,14 +225,13 @@ export default {
       );
     },
     modifyStation(Status) {
-      const selected = this.$refs["uploadStationTable"].selection;
-      if (selected.length !== 1) {
+      if (this.currentRow === null) {
         this.$message({
           message: "请选择一条数据！",
           type: "warning"
         });
       } else {
-        const Id = selected[0].id;
+        const Id = this.currentRow.id;
         if (Status === 3) {
           this.$confirm("是否确认删除此数据?", "提示", {
             confirmButtonText: "确定",
