@@ -236,17 +236,25 @@ export default {
         });
       } else {
         const Id = this.currentRow.id;
-        this.$post("/taskplan/delete", { id: Id }).then(res => {
-          if (res.State === 0) {
-            this.$message({
-              message: "操作成功！",
-              type: "success"
+        this.$confirm("是否确认删除此数据?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            this.$post("/taskplan/delete", { id: Id }).then(res => {
+              if (res.State === 0) {
+                this.$message({
+                  message: "操作成功！",
+                  type: "success"
+                });
+                this.queryFn();
+              } else {
+                this.$message.error("操作失败！");
+              }
             });
-            this.queryFn();
-          } else {
-            this.$message.error("操作失败！");
-          }
-        });
+          })
+          .catch(() => {});
       }
     },
     saveStation() {
