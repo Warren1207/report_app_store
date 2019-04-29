@@ -62,6 +62,12 @@ const router = new Router({
           title: "资源文件上传",
           name: "serverList",
           component: () => import("@/views/ServerList")
+        },
+        {
+          path: "ftpList",
+          title: "FTP列表",
+          name: "serverList",
+          component: () => import("@/views/FtpList")
         }
       ]
     }
