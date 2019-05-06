@@ -95,10 +95,9 @@
           <el-input
             v-model="templateInfo.Path"
             autocomplete="off"
-            :readonly="true"
             style="width:300px;margin-right:10px;"
           ></el-input>
-          <el-upload
+          <!-- <el-upload
             class="upload-demo"
             style="display: inline-block;"
             :action="uploadRtUrl"
@@ -109,7 +108,7 @@
             :headers="uploadHeaders"
           >
             <el-button size="small" type="primary">点击上传</el-button>
-          </el-upload>
+          </el-upload> -->
         </el-form-item>
         <el-form-item label="配置路径" prop="XmlPath">
           <el-input

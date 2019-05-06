@@ -1,77 +1,134 @@
 <template>
   <div class="wrap" style="height:0;" v-loading="loading">
-    <el-row>
-      <el-col :span="8">
-        <el-input
-          placeholder="模板名称"
-          v-model="input5"
-          readonly
-          class="input-with-select"
-        >
-          <el-button slot="append" v-if="selectIsShow" @click="templatList"
-            >选中模板</el-button
-          >
-        </el-input>
-      </el-col>
-    </el-row>
-    <div>
-      <div v-for="(item, index) in parameter" :key="item.id">
-        <div class="text_explain">
-          <span>{{ item }}</span>
+    <el-form
+      label-position="right"
+      :rules="rules"
+      :model="reportInfo"
+      ref="reportFrom"
+      label-width="270px"
+    >
+      <el-card class="box-card">
+        <div slot="header" class="header">
+          <span>报表命名</span>
         </div>
         <div>
-          <el-row type="flex" align="middle" class="createStyle">
-            <el-form
-              label-position="right"
-              label-width="180px"
-              v-for="item2 in parameterChlid[index]"
-              :key="item2.id"
+          <el-form-item label="报告名称" prop="Name">
+            <el-input v-model="reportInfo.Name"></el-input>
+          </el-form-item>
+          <el-form-item label="报告描述" prop="Desc">
+            <el-input type="textarea" v-model="reportInfo.Desc"></el-input>
+          </el-form-item>
+          <el-form-item label="服务器" prop="ServerId">
+            <el-select
+              v-model="reportInfo.ServerId"
+              clearable
+              placeholder="请选择服务器"
+              style="width:100%"
             >
-              <el-form-item :label="item2.name">
-                <el-input
-                  v-show="item2.isInput == true"
-                  v-model="item2.value"
-                  :readonly="read_only"
-                  placeholder="请输入内容"
-                ></el-input>
-                <el-select
-                  class="selectStyle"
-                  v-show="item2.isPullDown == true"
-                  v-model="item2.value"
-                  :disabled="read_only"
-                  placeholder="请选择"
-                >
-                  <el-option
-                    v-for="item3 in item2.items"
-                    v-model="item3.label"
-                    :key="item3.value"
-                  >
-                  </el-option>
-                </el-select>
-                <el-date-picker
-                  class="dateStyle"
-                  style="width: 100%;"
-                  v-model="item2.value"
-                  :readonly="read_only"
-                  v-show="item2.isDate == true"
-                  value-format="yyyy-MM-dd"
-                  placeholder="选择日期"
-                >
-                </el-date-picker>
-              </el-form-item>
-            </el-form>
-          </el-row>
+              <el-option
+                v-for="(item, index) in serverList"
+                :key="index"
+                :label="item.Name"
+                :value="item.Id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="参数模板" prop="Template">
+            <el-select
+              v-model="reportInfo.Template"
+              clearable
+              placeholder="请选择参数模板"
+              style="width:100%"
+              @visible-change="loadTemp"
+            >
+              <el-option
+                v-for="(item, index) in tempList"
+                :key="index"
+                :label="item"
+                :value="item"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="文件列表" prop="FileNames">
+            <el-input
+              placeholder="请选择文件"
+              :readonly="true"
+              v-model="reportInfo.FileNames"
+            >
+              <el-button
+                @click="showFiledialog"
+                slot="append"
+                icon="el-icon-search"
+              ></el-button>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="资源文件" prop="resourceFile">
+            <el-input v-model="reportInfo.resourceFile"></el-input>
+          </el-form-item>
         </div>
+      </el-card>
+      <el-card class="box-card">
+        <div slot="header" class="header">
+          <span>模板</span>
+        </div>
+        <div>
+          <el-form-item label="模板名称" prop="templateName">
+            <el-input
+              placeholder="模板名称"
+              v-model="reportInfo.templateName"
+              :readonly="true"
+              class="input-with-select"
+            >
+              <el-button slot="append" v-if="selectIsShow" @click="templatList"
+                >选中模板</el-button
+              >
+            </el-input>
+          </el-form-item>
+        </div>
+      </el-card>
+      <el-card class="box-card">
+        <div slot="header" class="header">
+          <span>参数</span>
+        </div>
+        <div>
+          <div
+            v-for="(value, key, index) in reportInfo.Parameters"
+            :key="index"
+          >
+            <fieldset v-if="filterFn(value)" class="field-set-wrap">
+              <legend>{{ value["@Text"] }}</legend>
+              <attr-field
+                :attr.sync="value"
+                :title="value['@Text']"
+                :serverId="reportInfo.ServerId"
+              ></attr-field>
+            </fieldset>
+          </div>
+        </div>
+      </el-card>
+      <el-form-item>
+        <el-button type="primary" @click="saveFun">保存</el-button>
+      </el-form-item>
+    </el-form>
+    <el-dialog title="选择文件" :visible.sync="showFileDlg">
+      <div style="max-height:350px;overflow-y: auto;">
+        <el-tree
+          :props="fileTreeProps"
+          :load="loadFileTreeFn"
+          node-key="Id"
+          lazy
+          ref="fileTree"
+          show-checkbox
+        >
+        </el-tree>
       </div>
-      <el-button
-        type="primary"
-        style="margin-bottom: 20px;"
-        v-show="saveIsShow"
-        @click="saveFun"
-        >{{ whatButton }}</el-button
-      >
-    </div>
-
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showFileDlg = false">取 消</el-button>
+        <el-button type="primary" @click="saveFiles">保存</el-button>
+      </span>
+    </el-dialog>
     <el-dialog title="选择模板" :visible.sync="dialogTableVisible">
       <el-table
         :data="gridData"
@@ -96,8 +153,12 @@
 </template>
 
 <script>
+import AttrField from "@/components/AttrField.vue";
 export default {
   name: "setreport",
+  components: {
+    AttrField
+  },
   data() {
     return {
       loading: false,
@@ -114,24 +175,53 @@ export default {
         pageIndex: 1,
         pageSize: 10
       },
+      fieldEnum: {
+        MultiplTreeView: "el-input",
+        TextBox: "el-input",
+        FolderBrowserDialog: "el-input",
+        ListBox: "el-select",
+        CheckBox: "el-checkbox",
+        DateTimePicker: "el-date-picker",
+        NumberBox: "el-input"
+      },
       pageCount: 0,
       parameter: [],
-      parameterChlid: []
-      // parameterChlid: [
-      //   [
-      //     {
-      //       name: "",
-      //       value: "",
-      //       isInput: true
-      //     },
-      //     {
-      //       name: "",
-      //       value: "",
-      //       items: [{ label: "" }, { label: "" }, { label: "" }],
-      //       isDate: true
-      //     }
-      //   ]
-      // ]
+      parameterChlid: [],
+      /** Modify by Warren Lee 2019-04-30  **/
+      rules: {
+        Name: [
+          { required: true, message: "请填写报告名称", trigger: "blur" },
+          { max: 50, message: "长度不能大于 50 个字符", trigger: "blur" }
+        ],
+        Desc: [{ max: 50, message: "长度不能大于 50 个字符", trigger: "blur" }],
+        ServerId: [
+          { required: true, message: "请选择服务器", trigger: "change" }
+        ],
+        Template: [
+          { required: true, message: "请选择参数模板", trigger: "change" }
+        ],
+        FileNames: [
+          { required: true, message: "请选择文件", trigger: "change" }
+        ],
+        resourceFile: [
+          { required: true, message: "请填写资源文件", trigger: "blur" },
+          { max: 50, message: "长度不能大于 50 个字符", trigger: "blur" }
+        ],
+        templateName: [
+          { required: true, message: "请选择模板", trigger: "change" }
+        ]
+      },
+      showFileDlg: false,
+      reportInfo: {},
+      serverList: [],
+      tempList: [],
+      fileTreeProps: {
+        label: "Text",
+        isLeaf: function(data) {
+          return !data.Children;
+        }
+      },
+      testList: []
     };
   },
   methods: {
@@ -151,117 +241,23 @@ export default {
         this.$refs["uploadStationTable"].toggleRowSelection(val.pop());
       }
     },
-
-    publicFun(item, array) {
-      if (item.RRRppp_ComponentType === "DateTimePicker") {
-        array.push({
-          name: item.RRRppp_Text,
-          value: item.RRRppp_Value,
-          isDate: true
-        });
-      }
-      if (
-        item.RRRppp_ComponentType === "NumberBox" ||
-        item.RRRppp_ComponentType === "TextBox"
-      ) {
-        array.push({
-          name: item.RRRppp_Text,
-          value: item.RRRppp_Value,
-          isInput: true
-        });
-      }
-      if (item.RRRppp_ComponentType === "ListBox") {
-        let arr = [];
-        item.RRRppp_Items.split(",").forEach(items => {
-          arr.push({ label: items });
-        });
-        array.push({
-          name: item.RRRppp_Text,
-          value: item.RRRppp_Value,
-          items: arr,
-          isPullDown: true
-        });
-      }
-      // if (item.RRRppp_ComponentType === "MultiplTreeView") {
-      // }
-      // if (item.RRRppp_ComponentType === "FolderBrowserDialog") {
-      // }
-      // if (item.RRRppp_ComponentType === "CheckBox") {
-      // }
-    },
-    sharingFun(data) {
-      this.saveData = data;
-      this.parameter = [];
-      this.parameterChlid = [];
-
-      for (let key in data) {
-        let parameterChlidArray = new Array();
-        this.parameterChlid.push(parameterChlidArray);
-        let keys = data[key];
-        if (keys && keys.RRRppp_ComponentType) {
-          this.parameter.push(keys.RRRppp_Text);
-          this.publicFun(keys, parameterChlidArray);
-        } else if (keys && !keys.RRRppp_ComponentType) {
-          this.parameter.push(keys.RRRppp_Text);
-          for (let traverse in keys) {
-            let traverse1 = keys[traverse];
-            if (traverse1 instanceof Array) {
-              traverse1.forEach(traverse8 => {
-                if (traverse8.RRRppp_ComponentType) {
-                  this.publicFun(traverse8, parameterChlidArray);
-                }
-              });
-            } else if (traverse1 instanceof Object) {
-              if (traverse1.RRRppp_ComponentType) {
-                this.publicFun(keys, parameterChlidArray);
-              } else {
-                for (let traverse2 in traverse1) {
-                  let traverse3 = traverse1[traverse2];
-                  if (traverse3 instanceof Array) {
-                    traverse3.forEach(traverse4 => {
-                      if (traverse4.RRRppp_ComponentType) {
-                        this.publicFun(traverse4, parameterChlidArray);
-                      }
-                    });
-                  } else if (traverse3 instanceof Object) {
-                    // if (traverse3.RRRppp_ComponentType) {
-                    //   this.publicFun(keys, parameterChlidArray);
-                    // } else {
-                    //   for (let traverse4 in traverse3) {
-                    //     console.log(traverse4);
-                    //   }
-                    // }
-                  }
-                }
-              }
-            }
-          }
-        }
-        if (parameterChlidArray.length === 0) {
-          this.parameterChlid.splice(
-            this.parameterChlid.indexOf(parameterChlidArray),
-            1
-          );
-          if (keys) {
-            this.parameter.splice(this.parameter.indexOf(keys.RRRppp_Text), 1);
-          }
-        }
-      }
-      this.saveIsShow = true;
-      this.loading = false;
-    },
     saveTemplate() {
       this.loading = true;
       this.dialogTableVisible = false;
       const selected = this.$refs["uploadStationTable"].selection;
       if (selected.length !== 0) {
-        this.templateId = selected[0].id;
-        this.input5 = selected[0].name;
+        this.reportInfo.templateId = selected[0].id;
+        this.reportInfo.templateName = selected[0].name;
         this.$fetch("/ReportTemplate/GetReportTemplateXml", {
-          id: this.templateId
+          id: this.reportInfo.templateId
         }).then(res => {
-          let data = JSON.parse(res.Data.replace(/@/g, "RRRppp_")).Parameters;
-          this.sharingFun(data);
+          if (res.State === 0) {
+            this.loading = false;
+            this.reportInfo["Parameters"] = JSON.parse(res.Data).Parameters;
+          } else {
+            this.$message.warning(res.Message);
+            this.loading = false;
+          }
         });
       } else {
         this.loading = false;
@@ -269,84 +265,130 @@ export default {
       }
     },
     saveFun() {
-      if (this.whatButton === "保存") {
-        this.loading = true;
-        let count2 = -1;
-        for (let key in this.saveData) {
-          let keys = this.saveData[key];
-
-          if (keys && keys.RRRppp_Text === "Connections") {
-            count2++;
-            keys.Connection.Property.forEach((item, index) => {
-              item.RRRppp_Value = this.parameterChlid[count2][index].value;
-            });
-          } else if (keys && keys.RRRppp_Text === "Select Categories") {
-            // eslin -disable-next-line
-          } else if (keys && keys.RRRppp_Text === "Output File Name") {
-            count2++;
-            keys.RRRppp_Value = this.parameterChlid[count2][0].value;
-          } else if (keys && keys.RRRppp_Text === "Output Directory") {
-            // eslin -disable-next-line
-          } else if (keys && keys.RRRppp_Text === "Output Type") {
-            count2++;
-            keys.RRRppp_Value = this.parameterChlid[count2][0].value;
-          } else if (keys && keys.RRRppp_Text === "Save By Category") {
-            // eslin -disable-next-line
-          } else if (keys && keys.RRRppp_Text === "Project Map Source") {
-            count2++;
-            keys.RRRppp_Value = this.parameterChlid[count2][0].value;
-          } else if (keys && keys.RRRppp_Text === "Customs") {
-            count2++;
-            let count3 = -1;
-            keys.Custom.forEach(item => {
-              if (
-                item.RRRppp_ComponentType &&
-                item.RRRppp_ComponentType !== "OpenFileDialog" &&
-                item.RRRppp_ComponentType !== "FolderBrowserDialog" &&
-                item.RRRppp_ComponentType !== "SaveFileDialog"
-              ) {
-                count3++;
-                item.RRRppp_Value = this.parameterChlid[count2][count3].value;
-              }
-            });
-          }
+      this.$refs["reportFrom"].validate(valid => {
+        if (valid) {
+          let params = JSON.parse(JSON.stringify(this.reportInfo));
+          params.xmlcontent = JSON.stringify(params.Parameters);
+          delete params.Parameters;
+          params.reporttemplateid = this.reportInfo.templateId;
+          this.$post("/TaskReport/CreateReport", params).then(res => {
+            if (res.State === 0) {
+              this.$message({
+                message: "保存成功！",
+                type: "success"
+              });
+              this.$router.push({
+                name: "reportList"
+              });
+            } else {
+              this.$message.error("保存失败！");
+            }
+          });
         }
-        this.$post("/TaskPlanReprotTemplate/Create", {
-          taskplanid: this.$route.query.plan_id,
-          reporttemplateid: this.templateId,
-          xmlparams: JSON.stringify(this.saveData).replace(/RRRppp_/g, "@")
+      });
+    },
+    queryServerList() {
+      this.$fetch("/Ftp/GetFtpList", { status: 1 }).then(res => {
+        this.serverList = res.Data;
+      });
+    },
+    loadTemp(show) {
+      if (this.reportInfo.ServerId) {
+        if (show && this.tempList.length === 0) {
+          this.$post("/TaskReport/GetParameterTemplates", {
+            id: this.reportInfo.ServerId
+          }).then(res => {
+            if (res.Data) {
+              this.tempList = res.Data;
+            } else {
+              this.$message({
+                message: "没有查询到此服务器的参数模板！",
+                type: "warning"
+              });
+            }
+          });
+        }
+      } else {
+        this.$message({
+          message: "请先选择服务器！",
+          type: "warning"
+        });
+      }
+    },
+    showFiledialog() {
+      if (this.reportInfo.ServerId) {
+        this.showFileDlg = true;
+      } else {
+        this.$message({
+          message: "请先选择服务器！",
+          type: "warning"
+        });
+      }
+    },
+    loadFileTreeFn(node, resolve) {
+      if (node.level === 0) {
+        this.$post("/TaskReport/GetFTPTree", {
+          id: this.reportInfo.ServerId,
+          Path: ""
         }).then(res => {
           if (res.State === 0) {
-            this.$message({
-              message: "保存成功！",
-              type: "success"
-            });
-            this.$route.query.plan_id = "";
-            this.templateId = "";
-            this.$router.push({ path: "/TaskPlan" });
-            this.saveIsShow = false;
+            return resolve(res.Data);
           } else {
-            this.$message.error(res.Message);
+            return resolve([]);
           }
-          this.parameter = [];
-          this.parameterChlid = [];
-          this.loading = false;
         });
-      } else {
-        this.$router.push({ path: "/TaskPlan" });
+      } else if (node.level >= 1) {
+        this.$post("/TaskReport/GetFTPTree", {
+          id: this.reportInfo.ServerId,
+          Path: node.data.Id
+        }).then(res => {
+          if (res.State === 0) {
+            return resolve(res.Data);
+          } else {
+            return resolve([]);
+          }
+        });
       }
+    },
+    saveFiles() {
+      const selectNodes = this.$refs["fileTree"].getCheckedNodes();
+      let names = [],
+        ids = [];
+      selectNodes.map(function(node) {
+        names.push(node.Text);
+        ids.push(node.Id);
+      });
+      this.reportInfo.FileNames = names.toString();
+      this.reportInfo.FileIds = ids.toString();
+      this.showFileDlg = false;
+    },
+    filterFn(value) {
+      if (value === null) {
+        return false;
+      } else if (value["@Text"] === "Streams") {
+        return false;
+      }
+      return true;
+    },
+    queryField(value) {
+      if (value["@ComponentType"]) {
+        return [value];
+      } else {
+        for (let att in value) {
+          if (Array.isArray(value[att])) {
+            return value[att];
+          } else if (typeof value[att] === "object") {
+            if (value[att]["@ComponentType"]) {
+              return [value[att]];
+            }
+          }
+        }
+      }
+      return value;
     }
   },
   created() {
-    if (this.$route.query.dataXml) {
-      this.selectIsShow = false;
-      this.read_only = true;
-      this.input5 = this.$route.query.dataName;
-      this.whatButton = "关闭";
-      let data = JSON.parse(this.$route.query.dataXml.replace(/@/g, "RRRppp_"))
-        .Parameters;
-      this.sharingFun(data);
-    }
+    this.queryServerList();
   }
 };
 </script>
@@ -388,5 +430,19 @@ export default {
 }
 .selectStyle > .el-input--suffix .el-input__inner {
   padding-right: 15px;
+}
+
+.box-card {
+  margin: 0 0 10px 0;
+  .header {
+    text-align: left;
+  }
+  fieldset {
+    border: 1px solid #dcdfe6;
+    text-align: left;
+    legend {
+      padding: 5px 10px;
+    }
+  }
 }
 </style>

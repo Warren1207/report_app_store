@@ -4,7 +4,7 @@ import router from "@/router";
 import { Message } from "element-ui";
 import config from "@/libs/config";
 
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 20000;
 axios.defaults.baseURL = config.baseUrl;
 
 // 路由请求拦截

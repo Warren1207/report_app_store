@@ -28,6 +28,12 @@
         <el-button type="primary" @click="queryFn">搜索</el-button>
       </el-col>
     </el-row>
+    <div class="opera-wrap">
+      <div class="opera-item" @click="addReport">
+        <i class="icon iconfont icon-xinzeng"></i>
+        <span>添加</span>
+      </div>
+    </div>
     <div class="table-wrap">
       <el-table
         ref="reportTable"
@@ -38,12 +44,12 @@
         height="100%"
       >
         <el-table-column type="index" width="55"> </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="scenesname"
           label="任务场景"
           show-overflow-tooltip
         >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="name" label="报告名称" show-overflow-tooltip>
         </el-table-column>
         <el-table-column label="状态">
@@ -68,13 +74,6 @@
         >
         </el-table-column>
         <el-table-column prop="errormessage" label="备注" show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button size="mini" @click="downloadFn(scope.row)"
-              >下载</el-button
-            >
-          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -136,6 +135,11 @@ export default {
     downloadFn(row) {
       window.location.href =
         config.baseUrl + "File/FileDownload?FilePath=" + row.downloadurl;
+    },
+    addReport() {
+      this.$router.push({
+        path: "/SetReport"
+      });
     }
   },
   created() {

@@ -70,4 +70,24 @@ body {
     }
   }
 }
+::-webkit-scrollbar-track-piece {
+  //滚动条凹槽的颜色，还可以设置边框属性
+  background-color: #f8f8f8;
+  border-radius: 10px;
+}
+::-webkit-scrollbar {
+  //滚动条的宽度
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-thumb {
+  //滚动条的设置
+  border-radius: 10px;
+  background-color: #dddddd;
+  background-clip: padding-box;
+  min-height: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #bbb;
+}
 </style>
