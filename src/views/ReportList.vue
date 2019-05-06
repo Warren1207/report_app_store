@@ -92,6 +92,7 @@
 
 <script>
 import config from "@/libs/config";
+import { setInterval } from "timers";
 export default {
   name: "reportlist",
   data() {
@@ -145,6 +146,10 @@ export default {
   created() {
     this.queryFn();
     this.queryScene();
+    const self = this;
+    setInterval(function() {
+      self.queryFn();
+    }, 1000 * 60 * 2);
   }
 };
 </script>

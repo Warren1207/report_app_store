@@ -204,7 +204,6 @@ export default {
           { required: true, message: "请选择文件", trigger: "change" }
         ],
         resourceFile: [
-          { required: true, message: "请填写资源文件", trigger: "blur" },
           { max: 50, message: "长度不能大于 50 个字符", trigger: "blur" }
         ],
         templateName: [

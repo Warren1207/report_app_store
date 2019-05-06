@@ -56,13 +56,13 @@
           show-overflow-tooltip
         >
         </el-table-column>
-        <el-table-column label="操作">
+        <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" @click="downloadFn(scope.row)"
               >下载</el-button
             >
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </div>
     <el-pagination
@@ -167,7 +167,7 @@ export default {
       rules: {
         Name: [
           { required: true, message: "请填写模板名称", trigger: "blur" },
-          { max: 20, message: "长度不能大于 20 个字符", trigger: "blur" }
+          { max: 50, message: "长度不能大于 50 个字符", trigger: "blur" }
         ],
         Path: [{ required: true, message: "请上传模板", trigger: "blur" }],
         XmlPath: [
@@ -179,8 +179,8 @@ export default {
         Path: "",
         XmlPath: ""
       },
-      uploadXmlUrl: config.baseUrl + "ReportTemplate/UploadReportTemplate",
-      uploadRtUrl: config.baseUrl + "ReportTemplate/UploadReportTemplate",
+      uploadXmlUrl: config.baseUrl + "/ReportTemplate/UploadReportTemplate",
+      uploadRtUrl: config.baseUrl + "/ReportTemplate/UploadReportTemplate",
       uploadHeaders: {
         Token: store.getters.Token
       },
