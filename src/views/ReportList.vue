@@ -10,7 +10,7 @@
           <el-option label="失败" :value="2"> </el-option>
           <el-option label="进行中" :value="0"> </el-option> </el-select
       ></el-col>
-      <el-col :span="3">
+      <!-- <el-col :span="3">
         <el-select
           v-model="queryParams.scenes"
           clearable
@@ -23,7 +23,7 @@
             :value="item.name"
           >
           </el-option> </el-select
-      ></el-col>
+      ></el-col> -->
       <el-col :span="4" style="text-align: left;">
         <el-button type="primary" @click="queryFn">搜索</el-button>
       </el-col>
@@ -145,7 +145,7 @@ export default {
   },
   created() {
     this.queryFn();
-    this.queryScene();
+    //this.queryScene();
     const self = this;
     setInterval(function() {
       self.queryFn();

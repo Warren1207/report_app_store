@@ -2,7 +2,7 @@
   <div class="wrap">
     <el-row :gutter="10">
       <el-col :span="4"
-        ><el-input v-model="queryParams.name" placeholder="工参名称"></el-input
+        ><el-input v-model="queryParams.name" placeholder="模板名称"></el-input
       ></el-col>
       <el-col :span="3">
         <el-select v-model="queryParams.status" clearable placeholder="状态">
