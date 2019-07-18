@@ -1,12 +1,6 @@
 <template>
   <div class="wrap" style="height:0;" v-loading="loading">
-    <el-form
-      label-position="right"
-      :rules="rules"
-      :model="reportInfo"
-      ref="reportFrom"
-      label-width="270px"
-    >
+    <el-form label-position="right" :rules="rules" :model="reportInfo" ref="reportFrom" label-width="270px" style="overflow-y: auto;">
       <el-card class="box-card">
         <div slot="header" class="header">
           <span>报表命名</span>
@@ -19,49 +13,20 @@
             <el-input type="textarea" v-model="reportInfo.Desc"></el-input>
           </el-form-item>
           <el-form-item label="服务器" prop="ServerId">
-            <el-select
-              v-model="reportInfo.ServerId"
-              clearable
-              placeholder="请选择服务器"
-              style="width:100%"
-            >
-              <el-option
-                v-for="(item, index) in serverList"
-                :key="index"
-                :label="item.Name"
-                :value="item.Id"
-              >
+            <el-select v-model="reportInfo.ServerId" clearable placeholder="请选择服务器" style="width:100%">
+              <el-option v-for="(item, index) in serverList" :key="index" :label="item.Name" :value="item.Id">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="参数模板" prop="Template">
-            <el-select
-              v-model="reportInfo.Template"
-              clearable
-              placeholder="请选择参数模板"
-              style="width:100%"
-              @visible-change="loadTemp"
-            >
-              <el-option
-                v-for="(item, index) in tempList"
-                :key="index"
-                :label="item"
-                :value="item"
-              >
+            <el-select v-model="reportInfo.Template" clearable placeholder="请选择参数模板" style="width:100%" @visible-change="loadTemp">
+              <el-option v-for="(item, index) in tempList" :key="index" :label="item" :value="item">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="文件列表" prop="FileNames">
-            <el-input
-              placeholder="请选择文件"
-              :readonly="true"
-              v-model="reportInfo.FileNames"
-            >
-              <el-button
-                @click="showFiledialog"
-                slot="append"
-                icon="el-icon-search"
-              ></el-button>
+            <el-input placeholder="请选择文件" :readonly="true" v-model="reportInfo.FileNames">
+              <el-button @click="showFiledialog" slot="append" icon="el-icon-search"></el-button>
             </el-input>
           </el-form-item>
           <el-form-item label="资源文件" prop="resourceFile">
@@ -75,15 +40,8 @@
         </div>
         <div>
           <el-form-item label="模板名称" prop="templateName">
-            <el-input
-              placeholder="模板名称"
-              v-model="reportInfo.templateName"
-              :readonly="true"
-              class="input-with-select"
-            >
-              <el-button slot="append" v-if="selectIsShow" @click="templatList"
-                >选中模板</el-button
-              >
+            <el-input placeholder="模板名称" v-model="reportInfo.templateName" :readonly="true" class="input-with-select">
+              <el-button slot="append" v-if="selectIsShow" @click="templatList">选中模板</el-button>
             </el-input>
           </el-form-item>
         </div>
@@ -93,17 +51,10 @@
           <span>参数</span>
         </div>
         <div>
-          <div
-            v-for="(value, key, index) in reportInfo.Parameters"
-            :key="index"
-          >
+          <div v-for="(value, key, index) in reportInfo.Parameters" :key="index">
             <fieldset v-if="filterFn(value)" class="field-set-wrap">
               <legend>{{ value["@Text"] }}</legend>
-              <attr-field
-                :attr.sync="value"
-                :title="value['@Text']"
-                :serverId="reportInfo.ServerId"
-              ></attr-field>
+              <attr-field :attr.sync="value" :title="value['@Text']" :serverId="reportInfo.ServerId"></attr-field>
             </fieldset>
           </div>
         </div>
@@ -114,14 +65,7 @@
     </el-form>
     <el-dialog title="选择文件" :visible.sync="showFileDlg">
       <div style="max-height:350px;overflow-y: auto;">
-        <el-tree
-          :props="fileTreeProps"
-          :load="loadFileTreeFn"
-          node-key="Id"
-          lazy
-          ref="fileTree"
-          show-checkbox
-        >
+        <el-tree :props="fileTreeProps" :load="loadFileTreeFn" node-key="Id" lazy ref="fileTree" show-checkbox>
         </el-tree>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -130,18 +74,10 @@
       </span>
     </el-dialog>
     <el-dialog title="选择模板" :visible.sync="dialogTableVisible">
-      <el-table
-        :data="gridData"
-        ref="uploadStationTable"
-        @selection-change="chooseInstance"
-        class="removeCheckbox"
-      >
+      <el-table :data="gridData" ref="uploadStationTable" @selection-change="chooseInstance" class="removeCheckbox">
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index" width="50"> </el-table-column>
-        <el-table-column
-          property="createdate"
-          label="上传日期"
-        ></el-table-column>
+        <el-table-column property="createdate" label="上传日期"></el-table-column>
         <el-table-column property="name" label="模板名称"></el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
